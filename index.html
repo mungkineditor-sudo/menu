@@ -17,6 +17,7 @@
   box-sizing:border-box;
 }
 *,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--body);
   padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
@@ -26,19 +27,26 @@ button{cursor:pointer;border:0;background:none}
 .wrap{max-width:520px;margin:0 auto}
 
 /* Header */
-.hero{background:var(--green);color:#fff;padding:calc(28px + env(safe-area-inset-top,0px)) 20px 26px;border-radius:0 0 28px 28px}
-.hero h1{font:800 32px/1.05 var(--display);margin:0;letter-spacing:-.01em}
-.hero p{margin:8px 0 0;color:#CFE4D9;font-size:15px}
+.hero{background:var(--green);color:#fff;text-align:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 22px;border-radius:0 0 28px 28px;
+  display:flex;flex-direction:column;align-items:center;gap:10px}
+.hero h1{font:800 28px/1.1 var(--display);margin:0;letter-spacing:-.01em}
+.logo{width:60px;height:60px;border-radius:18px;object-fit:cover;background:#fff;display:block}
 
-/* Kategori */
-.chips{position:sticky;top:0;z-index:5;display:flex;gap:8px;overflow-x:auto;padding:14px 20px 10px;background:var(--bg);scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-weight:600;font-size:14px;text-transform:capitalize}
-.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:#fff}
+/* Lokasi (di sheet Reservasi) */
+.loc{display:flex;align-items:flex-start;gap:8px;background:#E8F0EA;border-radius:16px;padding:12px 14px;font-size:14px;color:var(--green-d);margin-bottom:8px}
+.loc svg{width:18px;height:18px;flex:none;margin-top:2px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.loc a{color:var(--green);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+
+/* Daftar kategori (di sheet) */
+.cat-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:15px 16px;margin-bottom:10px;
+  border-radius:16px;background:#fff;border:1.5px solid var(--line);font-weight:600;font-size:17px;text-transform:capitalize}
+.cat-row small{display:block;margin-top:2px;color:var(--muted);font-weight:400;font-size:13px;text-transform:none}
+.cat-row svg{width:22px;height:22px;flex:none;stroke:var(--green);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.cat-row[aria-pressed="true"]{border-color:var(--green);background:#E8F0EA}
 
 /* Daftar menu */
-main{padding:4px 20px 0}
-.cat-title{font:700 20px/1.2 var(--display);margin:18px 0 12px;text-transform:capitalize}
+main{padding:6px 20px 0}
+.cat-title{font:800 24px/1.15 var(--display);margin:22px 0 14px;text-transform:capitalize}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .item{background:var(--card);border-radius:18px;padding:8px 8px 12px;display:flex;flex-direction:column;border:1px solid var(--line)}
 .item .pic{aspect-ratio:1/1;border-radius:12px;background:#E6ECE2;overflow:hidden;display:grid;place-items:center;font-size:34px}
@@ -114,15 +122,14 @@ main{padding:4px 20px 0}
 
 <div class="wrap">
   <div class="hero">
-    <h1 id="cafeName">Menu Kafe</h1>
-    <p id="tagline">Pilih menu, isi reservasi, kirim lewat WhatsApp.</p>
+    <img id="logo" class="logo" alt="Logo kafe" hidden>
+    <h1 id="cafeName">Leo Caffee</h1>
   </div>
-  <div class="chips" id="chips" role="group" aria-label="Kategori menu"></div>
   <main id="menu" aria-live="polite"></main>
 </div>
 
 <nav class="tabbar" aria-label="Navigasi utama">
-  <button class="tab" id="tabMenu" aria-current="true">
+  <button class="tab" id="tabMenu" aria-current="true" aria-label="Pilih kategori menu">
     <svg viewBox="0 0 24 24"><path d="M5 3v7a2 2 0 0 0 4 0V3M7 3v18M18 3c-2.2 0-3.5 2.4-3.5 5.5S15.8 12 18 12v9"/></svg>Menu
   </button>
   <button class="tab-cart" id="tabCart" aria-label="Buka keranjang">
@@ -135,6 +142,12 @@ main{padding:4px 20px 0}
 </nav>
 
 <div class="scrim" id="scrim"></div>
+
+<section class="sheet" id="sheetCat" role="dialog" aria-modal="true" aria-labelledby="catTitle">
+  <header><h2 id="catTitle">Kategori</h2><button class="x" data-close aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></header>
+  <div class="body" id="catBody"></div>
+  <div style="height:calc(12px + env(safe-area-inset-bottom,0px))"></div>
+</section>
 
 <section class="sheet" id="sheetCart" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
   <header><h2 id="cartTitle">Keranjang</h2><button class="x" data-close aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></header>
@@ -159,6 +172,10 @@ main{padding:4px 20px 0}
     </div>
     <div class="field"><label for="fCatatan">Catatan (opsional)</label><textarea id="fCatatan" placeholder="Contoh: minta meja dekat jendela"></textarea></div>
     <div class="recap" id="recap"></div>
+    <div class="loc" id="loc" hidden>
+      <svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+      <span><span id="addrText"></span> <a id="mapLink" href="#" target="_blank" rel="noopener" hidden>Buka peta</a></span>
+    </div>
   </div>
   <footer>
     <div class="total"><span>Total pesanan</span><b id="rsvTotal">Rp0</b></div>
@@ -170,18 +187,19 @@ main{padding:4px 20px 0}
 
 <script>
 /* ====== PENGATURAN ======
-   Nomor WhatsApp, nama kafe, dan tagline dibaca dari tab "Pengaturan" di Google Sheet.
-   Nilai di bawah hanya cadangan kalau tab itu belum dibuat. */
+   Menu dibaca dari sheet "daftar menu". Data kafe (nama, No WhatsApp, alamat, link maps, logo)
+   dibaca dari sheet "main data". Nilai DEFAULT hanya cadangan kalau sheet gagal dimuat. */
 const CONFIG = {
   SHEET_ID: '1AslHIh6h215Bg26Ilz1C_jJSpABqGk1725P5y_EvV-w',
   MENU_TAB: 'Sheet1',
-  SETTINGS_TAB: 'Pengaturan',
+  SETTINGS_SHEET_ID: '11ru-gvxt6jhD37XQDPllGN8gphp394eDah87p8RsGVA',
+  SETTINGS_TAB: 'Sheet1',
   DEFAULT_WA: '085117017130',
-  DEFAULT_NAME: 'Menu Kafe'
+  DEFAULT_NAME: 'Leo Caffee'
 };
 
 const $ = s => document.querySelector(s);
-const state = { items: [], cats: [], cat: 'Semua', cart: {}, wa: CONFIG.DEFAULT_WA, cafe: CONFIG.DEFAULT_NAME };
+const state = { items: [], cats: [], cat: '', cart: {}, wa: CONFIG.DEFAULT_WA, cafe: CONFIG.DEFAULT_NAME };
 const rp = n => 'Rp' + Math.round(n).toLocaleString('id-ID');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const enc = encodeURIComponent, dec = decodeURIComponent;
@@ -191,8 +209,8 @@ function saveCart(){ try{ localStorage.setItem('menu-kafe-cart', JSON.stringify(
 function loadCart(){ try{ state.cart = JSON.parse(localStorage.getItem('menu-kafe-cart')||'{}') || {}; }catch(e){ state.cart = {}; } }
 
 /* ---------- Google Sheet ---------- */
-async function readTab(tab){
-  const url = `https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${enc(tab)}`;
+async function readTab(tab, id = CONFIG.SHEET_ID, headers = 1){
+  const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&headers=${headers}&sheet=${enc(tab)}`;
   const res = await fetch(url);
   if(!res.ok) throw new Error('HTTP ' + res.status);
   const txt = await res.text();
@@ -226,24 +244,29 @@ function parseMenu(table){
   return items;
 }
 function parseSettings(table){
-  const out = {};
+  const raw = {};
+  const put = (k, v) => {
+    if(k == null || v == null || !String(k).trim()) return;
+    raw[String(k).trim().toLowerCase().replace(/[_\s]+/g,' ')] = String(v).trim();
+  };
   const cols = table.cols || [];
-  if(cols[0] && cols[0].label && cols[1] && cols[1].label) out[cols[0].label.trim().toLowerCase()] = cols[1].label.trim();
-  (table.rows||[]).forEach(r => {
-    const c = r.c || [];
-    if(c[0] && c[0].v != null && c[1] && c[1].v != null) out[String(c[0].v).trim().toLowerCase()] = String(c[1].v).trim();
-  });
-  return out;
+  // Kalau baris 1 terbaca sebagai judul kolom, tetap dipakai sebagai data
+  if(cols[0] && cols[0].label && cols[1] && cols[1].label) put(cols[0].label, cols[1].label);
+  (table.rows || []).forEach(r => { const c = r.c || []; put(c[0] && c[0].v, c[1] && c[1].v); });
+  const pick = (...ks) => { for(const k of ks) if(raw[k]) return raw[k]; return ''; };
+  return {
+    wa: pick('no whatsapp','whatsapp','wa','no wa'),
+    name: pick('nama cafe','nama kafe','nama'),
+    addr: pick('alamat'),
+    maps: pick('link maps','maps','peta'),
+    logo: pick('logo'),
+    tagline: pick('tagline')
+  };
 }
 
 /* ---------- Render menu ---------- */
 function showSkeleton(){
   $('#menu').innerHTML = '<div class="grid">' + '<div class="skel"></div>'.repeat(4) + '</div>';
-}
-function renderChips(){
-  const all = ['Semua', ...state.cats];
-  $('#chips').innerHTML = all.map(c => `<button class="chip" data-cat="${enc(c)}" aria-pressed="${c===state.cat}">${esc(c)}</button>`).join('');
-  $('#chips').style.display = state.cats.length > 1 ? 'flex' : 'none';
 }
 function cardHTML(it){
   const q = (state.cart[it.name]||{}).qty || 0;
@@ -254,14 +277,19 @@ function cardHTML(it){
   return `<article class="item"><div class="pic">${pic}</div><h3>${esc(it.name)}</h3><p class="price">${rp(it.price)}</p><div class="act">${act}</div></article>`;
 }
 function renderMenu(){
-  renderChips();
   if(!state.items.length){
     $('#menu').innerHTML = '<div class="state"><b>Menu belum tersedia</b>Isi data menu di Google Sheet, lalu muat ulang halaman ini.</div>';
     return;
   }
-  const cats = state.cat === 'Semua' ? state.cats : [state.cat];
-  $('#menu').innerHTML = cats.map(c =>
-    `<section><h2 class="cat-title">${esc(c)}</h2><div class="grid">${state.items.filter(i => i.cat === c).map(cardHTML).join('')}</div></section>`).join('');
+  const c = state.cat || state.cats[0];
+  $('#menu').innerHTML = `<h2 class="cat-title">${esc(c)}</h2><div class="grid">${state.items.filter(i => i.cat === c).map(cardHTML).join('')}</div>`;
+}
+function renderCats(){
+  if(!state.cats.length){ $('#catBody').innerHTML = '<div class="state"><b>Belum ada kategori</b>Tambahkan menu di Google Sheet.</div>'; return; }
+  $('#catBody').innerHTML = state.cats.map(c => {
+    const n = state.items.filter(i => i.cat === c).length, on = c === state.cat;
+    return `<button class="cat-row" data-cat="${enc(c)}" aria-pressed="${on}"><span>${esc(c)}<small>${n} menu</small></span>${on ? '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : ''}</button>`;
+  }).join('');
 }
 
 /* ---------- Cart logic ---------- */
@@ -310,11 +338,11 @@ function openIt(id){
   closeIt(true);
   openSheet = id;
   $(id).classList.add('on'); $('#scrim').classList.add('on');
-  $('#tabMenu').removeAttribute('aria-current');
+  if(id === '#sheetCat') $('#tabMenu').setAttribute('aria-current','true'); else $('#tabMenu').removeAttribute('aria-current');
   document.body.style.overflow = 'hidden';
 }
 function closeIt(keep){
-  ['#sheetCart','#sheetRsv'].forEach(s => $(s).classList.remove('on'));
+  ['#sheetCat','#sheetCart','#sheetRsv'].forEach(s => $(s).classList.remove('on'));
   $('#scrim').classList.remove('on');
   document.body.style.overflow = '';
   openSheet = null;
@@ -373,7 +401,7 @@ function send(){
 /* ---------- Events ---------- */
 document.addEventListener('click', e => {
   const cat = e.target.closest('[data-cat]');
-  if(cat){ state.cat = dec(cat.dataset.cat); renderMenu(); return; }
+  if(cat){ state.cat = dec(cat.dataset.cat); renderMenu(); renderCats(); closeIt(); window.scrollTo({ top:0 }); return; }
   const act = e.target.closest('[data-act]');
   if(act){ const k = dec(act.dataset.k); changeQty(k, act.dataset.act === 'dec' ? -1 : 1); return; }
   if(e.target.closest('[data-close]') || e.target === $('#scrim')) closeIt();
@@ -383,7 +411,7 @@ document.addEventListener('input', e => {
   if(n){ const k = dec(n); if(state.cart[k]){ state.cart[k].note = e.target.value.trim(); saveCart(); } }
 });
 document.addEventListener('keydown', e => { if(e.key === 'Escape' && openSheet) closeIt(); });
-$('#tabMenu').onclick = () => { closeIt(); window.scrollTo({ top:0, behavior:'smooth' }); };
+$('#tabMenu').onclick = () => { if(openSheet === '#sheetCat') closeIt(); else { renderCats(); openIt('#sheetCat'); } };
 $('#tabCart').onclick = () => openIt('#sheetCart');
 $('#tabRsv').onclick = () => openIt('#sheetRsv');
 $('#toRsv').onclick = () => openIt('#sheetRsv');
@@ -398,23 +426,30 @@ async function init(){
   $('#cafeName').textContent = state.cafe;
   showSkeleton();
 
-  const [menuRes, setRes] = await Promise.allSettled([ readTab(CONFIG.MENU_TAB), readTab(CONFIG.SETTINGS_TAB) ]);
+  const [menuRes, setRes] = await Promise.allSettled([ readTab(CONFIG.MENU_TAB), readTab(CONFIG.SETTINGS_TAB, CONFIG.SETTINGS_SHEET_ID, 0) ]);
 
   if(setRes.status === 'fulfilled'){
-    const s = parseSettings(setRes.value);
-    if(s.whatsapp) state.wa = s.whatsapp;
-    if(s.nama_kafe){ state.cafe = s.nama_kafe; $('#cafeName').textContent = s.nama_kafe; document.title = s.nama_kafe; }
-    if(s.tagline) $('#tagline').textContent = s.tagline;
+    const t = parseSettings(setRes.value);
+    if(t.wa) state.wa = t.wa;
+    if(t.name){ state.cafe = t.name; $('#cafeName').textContent = t.name; document.title = t.name; }
+    if(t.addr){ $('#addrText').textContent = t.addr; $('#loc').hidden = false; }
+    if(t.maps && /^https?:\/\//i.test(t.maps)){ $('#mapLink').href = t.maps; $('#mapLink').hidden = false; $('#loc').hidden = false; }
+    const logoUrl = driveImg(t.logo);
+    if(logoUrl){
+      const lg = $('#logo');
+      lg.onerror = () => { lg.hidden = true; };
+      lg.referrerPolicy = 'no-referrer';
+      lg.src = logoUrl; lg.hidden = false;
+    }
   }
 
   if(menuRes.status !== 'fulfilled'){
-    $('#chips').style.display = 'none';
     $('#menu').innerHTML = '<div class="state"><b>Menu gagal dimuat</b>Cek koneksi internet dan pastikan Google Sheet dibagikan ke "Siapa saja yang memiliki link".<br><button class="btn-line" onclick="init()">Coba lagi</button></div>';
     return;
   }
   state.items = parseMenu(menuRes.value);
   state.cats = [...new Set(state.items.map(i => i.cat))];
-  if(!state.cats.includes(state.cat)) state.cat = 'Semua';
+  state.cat = state.cats[0] || '';   // halaman awal = kategori paling atas di sheet
 
   // Sinkronkan keranjang tersimpan dengan data terbaru dari sheet
   Object.keys(state.cart).forEach(k => {
@@ -423,6 +458,7 @@ async function init(){
   });
   saveCart();
   refresh();
+  renderCats();
 }
 init();
 </script>
