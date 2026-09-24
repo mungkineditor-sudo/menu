@@ -26,47 +26,43 @@ button{cursor:pointer;border:0;background:none}
 :focus-visible{outline:3px solid var(--mango);outline-offset:2px}
 .wrap{max-width:520px;margin:0 auto}
 
-/* Header */
 .hero{background:var(--green);color:#fff;text-align:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 22px;border-radius:0 0 28px 28px;
   display:flex;flex-direction:column;align-items:center;gap:10px}
 .hero h1{font:800 28px/1.1 var(--display);margin:0;letter-spacing:-.01em}
+.hero p{margin:-4px 0 0;font-size:14px;color:#CFE3D9}
 .logo{width:60px;height:60px;border-radius:18px;object-fit:cover;background:#fff;display:block}
 
-/* Lokasi (di sheet Reservasi) */
 .loc{display:flex;align-items:flex-start;gap:8px;background:#E8F0EA;border-radius:16px;padding:12px 14px;font-size:14px;color:var(--green-d);margin-bottom:8px}
 .loc svg{width:18px;height:18px;flex:none;margin-top:2px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .loc a{color:var(--green);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
 
-/* Daftar kategori (di sheet) */
 .cat-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:15px 16px;margin-bottom:10px;
   border-radius:16px;background:#fff;border:1.5px solid var(--line);font-weight:600;font-size:17px;text-transform:capitalize}
 .cat-row small{display:block;margin-top:2px;color:var(--muted);font-weight:400;font-size:13px;text-transform:none}
 .cat-row svg{width:22px;height:22px;flex:none;stroke:var(--green);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
 .cat-row[aria-pressed="true"]{border-color:var(--green);background:#E8F0EA}
 
-/* Daftar menu */
 main{padding:6px 20px 0}
 .cat-title{font:800 24px/1.15 var(--display);margin:22px 0 14px;text-transform:capitalize}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .item{background:var(--card);border-radius:18px;padding:8px 8px 12px;display:flex;flex-direction:column;border:1px solid var(--line)}
 .item .pic{aspect-ratio:1/1;border-radius:12px;background:#E6ECE2;overflow:hidden;display:grid;place-items:center;font-size:34px}
 .item .pic img{width:100%;height:100%;object-fit:cover;display:block}
-.item h3{font:600 16px/1.25 var(--body);margin:10px 4px 2px}
+.item h3{font:600 16px/1.25 var(--body);margin:10px 4px 2px;overflow-wrap:anywhere}
 .item .price{margin:0 4px 10px;color:var(--green);font-weight:600}
 .item .act{margin-top:auto}
 .btn-add{width:100%;padding:9px 0;border-radius:999px;background:var(--green);color:#fff;font-weight:600;font-size:14px}
+.btn-add:disabled{background:#C9D3CC;color:#5B6A62;cursor:not-allowed}
 .stepper{display:flex;align-items:center;justify-content:space-between;background:#E8F0EA;border-radius:999px;padding:3px}
 .stepper button{width:34px;height:34px;border-radius:50%;background:#fff;font-size:20px;line-height:1;font-weight:600;color:var(--green)}
 .stepper span{font-weight:600;min-width:24px;text-align:center}
 
-/* Status muat */
 .skel{height:220px;border-radius:18px;background:linear-gradient(90deg,#E6ECE2 25%,#F0F4ED 50%,#E6ECE2 75%);background-size:200% 100%;animation:sh 1.3s infinite}
 @keyframes sh{to{background-position:-200% 0}}
 .state{grid-column:1/-1;text-align:center;padding:36px 12px;color:var(--muted)}
 .state b{display:block;color:var(--ink);font:700 18px var(--display);margin-bottom:6px}
 .btn-line{margin-top:14px;padding:10px 20px;border-radius:999px;border:1.5px solid var(--green);color:var(--green);font-weight:600}
 
-/* Tab bar */
 .tabbar{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));margin:0 auto;width:calc(100% - 24px);max-width:496px;z-index:20;
   height:64px;border-radius:32px;background:var(--green);display:grid;grid-template-columns:1fr 84px 1fr;align-items:center;box-shadow:0 8px 24px rgba(19,66,50,.35)}
 .tab{display:flex;flex-direction:column;align-items:center;gap:2px;color:#A9CBBB;font-size:12px;font-weight:600;height:100%;justify-content:center}
@@ -76,13 +72,11 @@ main{padding:6px 20px 0}
   display:grid;place-items:center;border:5px solid var(--bg)}
 .tab-cart svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .badge{position:absolute;top:-4px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--green-d);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
-.badge[hidden]{display:none}
 
-/* Sheet */
 .scrim{position:fixed;inset:0;background:rgba(10,24,18,.5);z-index:25;opacity:0;pointer-events:none;transition:opacity .2s}
 .scrim.on{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;width:100%;max-width:520px;z-index:30;background:var(--bg);
-  border-radius:26px 26px 0 0;max-height:90dvh;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+  border-radius:26px 26px 0 0;max-height:90vh;max-height:90dvh;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}
 .sheet.on{transform:none;visibility:visible}
 .sheet header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 8px}
 .sheet h2{font:800 22px var(--display);margin:0}
@@ -96,7 +90,6 @@ main{padding:6px 20px 0}
 .btn-main.wa{background:#1FA855}
 .btn-main:disabled{opacity:.5}
 
-/* Baris keranjang */
 .line{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
 .line-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .line-top b{font-weight:600}
@@ -104,12 +97,11 @@ main{padding:6px 20px 0}
 .line .stepper{flex:none;width:112px}
 .line input{width:100%;margin-top:10px;padding:9px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);font-size:14px}
 
-/* Form reservasi */
 .field{margin-bottom:14px}
 .field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
 .field input,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font-size:16px}
 .field textarea{resize:vertical;min-height:76px}
-.field .bad,.field input.bad{border-color:var(--danger)}
+.field input.bad,.field textarea.bad{border-color:var(--danger)}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .recap{background:#E8F0EA;border-radius:16px;padding:12px 14px;font-size:14px;color:var(--green-d);margin-bottom:8px}
 
@@ -124,6 +116,7 @@ main{padding:6px 20px 0}
   <div class="hero">
     <img id="logo" class="logo" alt="Logo kafe" hidden>
     <h1 id="cafeName">Leo Caffee</h1>
+    <p id="tagline" hidden></p>
   </div>
   <main id="menu" aria-live="polite"></main>
 </div>
@@ -161,7 +154,7 @@ main{padding:6px 20px 0}
 <section class="sheet" id="sheetRsv" role="dialog" aria-modal="true" aria-labelledby="rsvTitle">
   <header><h2 id="rsvTitle">Reservasi</h2><button class="x" data-close aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></header>
   <div class="body">
-    <div class="field"><label for="fNama">Nama pemesan</label><input id="fNama" autocomplete="name" placeholder="Nama kamu"></div>
+    <div class="field"><label for="fNama">Nama pemesan</label><input id="fNama" autocomplete="name" maxlength="60" placeholder="Nama kamu"></div>
     <div class="row2">
       <div class="field"><label for="fTgl">Tanggal</label><input id="fTgl" type="date"></div>
       <div class="field"><label for="fJam">Jam</label><input id="fJam" type="time"></div>
@@ -170,7 +163,7 @@ main{padding:6px 20px 0}
       <div class="field"><label for="fOrang">Jumlah orang</label><input id="fOrang" type="number" inputmode="numeric" min="1" max="50" value="2"></div>
       <div class="field"><label for="fHp">No. HP (opsional)</label><input id="fHp" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xx"></div>
     </div>
-    <div class="field"><label for="fCatatan">Catatan (opsional)</label><textarea id="fCatatan" placeholder="Contoh: minta meja dekat jendela"></textarea></div>
+    <div class="field"><label for="fCatatan">Catatan (opsional)</label><textarea id="fCatatan" maxlength="300" placeholder="Contoh: minta meja dekat jendela"></textarea></div>
     <div class="recap" id="recap"></div>
     <div class="loc" id="loc" hidden>
       <svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
@@ -187,59 +180,103 @@ main{padding:6px 20px 0}
 
 <script>
 /* ====== PENGATURAN ======
-   Menu dibaca dari sheet "daftar menu". Data kafe (nama, No WhatsApp, alamat, link maps, logo)
-   dibaca dari sheet "main data". Nilai DEFAULT hanya cadangan kalau sheet gagal dimuat. */
+   Sheet menu: kolom  ID Menu | Kategori | Menu | Harga | Link Image
+   Sheet pengaturan: kolom A = nama data, kolom B = isi (nama cafe, no whatsapp, alamat, link maps, logo, tagline).
+   Nilai DEFAULT hanya cadangan kalau sheet gagal dimuat. */
 const CONFIG = {
   SHEET_ID: '1AslHIh6h215Bg26Ilz1C_jJSpABqGk1725P5y_EvV-w',
   MENU_TAB: 'Sheet1',
   SETTINGS_SHEET_ID: '11ru-gvxt6jhD37XQDPllGN8gphp394eDah87p8RsGVA',
   SETTINGS_TAB: 'Sheet1',
   DEFAULT_WA: '085117017130',
-  DEFAULT_NAME: 'Leo Caffee'
+  DEFAULT_NAME: 'Leo Caffee',
+  CART_KEY: 'menu-kafe-cart-v2',      // v2: keranjang kini memakai ID Menu (data lama diabaikan)
+  TIMEOUT_MS: 12000
 };
 
 const $ = s => document.querySelector(s);
 const state = { items: [], cats: [], cat: '', cart: {}, wa: CONFIG.DEFAULT_WA, cafe: CONFIG.DEFAULT_NAME };
-const rp = n => 'Rp' + Math.round(n).toLocaleString('id-ID');
+const rp = n => 'Rp' + Math.round(Number(n) || 0).toLocaleString('id-ID');
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const enc = encodeURIComponent, dec = decodeURIComponent;
+const enc = encodeURIComponent;
+const dec = s => { try{ return decodeURIComponent(s); }catch(e){ return s; } };
+const clean = s => String(s == null ? '' : s).replace(/\s+/g,' ').trim();
 
 /* ---------- Cart storage ---------- */
-function saveCart(){ try{ localStorage.setItem('menu-kafe-cart', JSON.stringify(state.cart)); }catch(e){} }
-function loadCart(){ try{ state.cart = JSON.parse(localStorage.getItem('menu-kafe-cart')||'{}') || {}; }catch(e){ state.cart = {}; } }
+function saveCart(){ try{ localStorage.setItem(CONFIG.CART_KEY, JSON.stringify(state.cart)); }catch(e){} }
+function loadCart(){
+  state.cart = {};
+  try{
+    const raw = JSON.parse(localStorage.getItem(CONFIG.CART_KEY) || '{}') || {};
+    Object.keys(raw).forEach(id => {
+      const c = raw[id];
+      if(c && typeof c === 'object' && Number.isFinite(c.qty) && c.qty > 0)
+        state.cart[id] = { id, name: clean(c.name), price: Number(c.price) || 0, qty: Math.min(99, Math.floor(c.qty)), note: clean(c.note) };
+    });
+  }catch(e){ state.cart = {}; }
+}
 
 /* ---------- Google Sheet ---------- */
 async function readTab(tab, id = CONFIG.SHEET_ID, headers = 1){
   const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&headers=${headers}&sheet=${enc(tab)}`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error('HTTP ' + res.status);
-  const txt = await res.text();
-  const json = JSON.parse(txt.slice(txt.indexOf('{'), txt.lastIndexOf('}') + 1));
-  if(json.status === 'error') throw new Error('Sheet error');
-  return json.table;
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), CONFIG.TIMEOUT_MS);
+  try{
+    const res = await fetch(url, { signal: ctl.signal });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const txt = await res.text();
+    const a = txt.indexOf('{'), b = txt.lastIndexOf('}');
+    if(a < 0 || b < a) throw new Error('Format tidak dikenali (sheet belum dibagikan?)');
+    const json = JSON.parse(txt.slice(a, b + 1));
+    if(json.status === 'error' || !json.table) throw new Error('Sheet error');
+    return json.table;
+  } finally { clearTimeout(timer); }
 }
 function driveImg(link){
   if(!link) return '';
-  const m = String(link).match(/\/d\/([\w-]+)/) || String(link).match(/[?&]id=([\w-]+)/);
-  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w600` : String(link);
+  const s = String(link).trim();
+  const m = s.match(/\/d\/([\w-]+)/) || s.match(/[?&]id=([\w-]+)/);
+  if(m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w600`;
+  return /^https?:\/\//i.test(s) ? s : '';
+}
+/* "Rp20.000" -> 20000 ; "15.500,50" -> 15500.5 ; 20000 -> 20000 */
+function parsePrice(v){
+  if(typeof v === 'number') return isFinite(v) && v > 0 ? v : 0;
+  let s = String(v == null ? '' : v).replace(/[^\d.,]/g,'');
+  if(!s) return 0;
+  if(s.includes(',')) s = s.replace(/\./g,'').replace(',','.');
+  else if(/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,'');
+  const n = parseFloat(s);
+  return isFinite(n) && n > 0 ? n : 0;
 }
 function parseMenu(table){
   const cols = table.cols || [];
-  const idx = (names, fb) => { const i = cols.findIndex(c => names.includes((c.label||'').trim().toLowerCase())); return i >= 0 ? i : fb; };
-  const iCat = idx(['kategori','category'],0), iName = idx(['menu','nama','nama menu'],1),
-        iPrice = idx(['harga','price'],2), iImg = idx(['link image','gambar','image','foto'],3);
+  let rows = table.rows || [];
+  let labels = cols.map(c => clean(c.label).toLowerCase());
+  // Kalau header tidak terbaca sebagai judul kolom, pakai baris pertama sebagai header
+  if(!labels.some(l => l)){
+    const first = (rows[0] && rows[0].c) || [];
+    labels = cols.map((_, i) => clean(first[i] && first[i].v).toLowerCase());
+    rows = rows.slice(1);
+  }
+  const idx = (names, fb) => { const i = labels.findIndex(l => names.includes(l)); return i >= 0 ? i : fb; };
+  const iId = idx(['id menu','id','kode','kode menu'], 0), iCat = idx(['kategori','category'], 1),
+        iName = idx(['menu','nama','nama menu'], 2), iPrice = idx(['harga','price'], 3),
+        iImg = idx(['link image','gambar','image','foto'], 4);
+  const items = [], seen = new Set();
   let lastCat = 'Menu';
-  const items = [];
-  (table.rows||[]).forEach(r => {
-    const c = r.c || [];
+  rows.forEach(r => {
+    const c = (r && r.c) || [];
     const v = i => (c[i] && c[i].v != null) ? c[i].v : '';
-    const name = String(v(iName)).trim();
+    const name = clean(v(iName));
     if(!name) return;
-    const cat = String(v(iCat)).trim();
+    const cat = clean(v(iCat));
     if(cat) lastCat = cat;
-    let price = v(iPrice);
-    price = typeof price === 'number' ? price : parseInt(String(price).replace(/\D/g,''),10);
-    items.push({ name, cat: lastCat, price: isNaN(price) ? 0 : price, img: driveImg(v(iImg)) });
+    let id = clean(v(iId)).replace(/\s+/g,'');
+    if(!id) id = 'auto-' + (lastCat + '-' + name).toLowerCase().replace(/[^a-z0-9]+/g,'-');
+    if(seen.has(id)){ console.warn('ID Menu ganda di sheet:', id, name); let n = 2; while(seen.has(id + '-' + n)) n++; id = id + '-' + n; }
+    seen.add(id);
+    items.push({ id, name, cat: lastCat, price: parsePrice(v(iPrice)), img: driveImg(String(v(iImg))) });
   });
   return items;
 }
@@ -250,9 +287,8 @@ function parseSettings(table){
     raw[String(k).trim().toLowerCase().replace(/[_\s]+/g,' ')] = String(v).trim();
   };
   const cols = table.cols || [];
-  // Kalau baris 1 terbaca sebagai judul kolom, tetap dipakai sebagai data
   if(cols[0] && cols[0].label && cols[1] && cols[1].label) put(cols[0].label, cols[1].label);
-  (table.rows || []).forEach(r => { const c = r.c || []; put(c[0] && c[0].v, c[1] && c[1].v); });
+  (table.rows || []).forEach(r => { const c = (r && r.c) || []; put(c[0] && c[0].v, c[1] && c[1].v); });
   const pick = (...ks) => { for(const k of ks) if(raw[k]) return raw[k]; return ''; };
   return {
     wa: pick('no whatsapp','whatsapp','wa','no wa'),
@@ -269,19 +305,21 @@ function showSkeleton(){
   $('#menu').innerHTML = '<div class="grid">' + '<div class="skel"></div>'.repeat(4) + '</div>';
 }
 function cardHTML(it){
-  const q = (state.cart[it.name]||{}).qty || 0;
+  const q = (state.cart[it.id] || {}).qty || 0;
+  const k = enc(it.id);
   const pic = it.img ? `<img src="${esc(it.img)}" alt="${esc(it.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode('☕'))">` : '☕';
-  const act = q
-    ? `<div class="stepper"><button data-act="dec" data-k="${enc(it.name)}" aria-label="Kurangi ${esc(it.name)}">−</button><span>${q}</span><button data-act="inc" data-k="${enc(it.name)}" aria-label="Tambah ${esc(it.name)}">+</button></div>`
-    : `<button class="btn-add" data-act="add" data-k="${enc(it.name)}">Tambah</button>`;
-  return `<article class="item"><div class="pic">${pic}</div><h3>${esc(it.name)}</h3><p class="price">${rp(it.price)}</p><div class="act">${act}</div></article>`;
+  let act;
+  if(!it.price) act = '<button class="btn-add" disabled>Belum tersedia</button>';
+  else if(q) act = `<div class="stepper"><button data-act="dec" data-k="${k}" aria-label="Kurangi ${esc(it.name)}">−</button><span>${q}</span><button data-act="inc" data-k="${k}" aria-label="Tambah ${esc(it.name)}">+</button></div>`;
+  else act = `<button class="btn-add" data-act="add" data-k="${k}" aria-label="Tambah ${esc(it.name)} ke keranjang">Tambah</button>`;
+  return `<article class="item"><div class="pic">${pic}</div><h3>${esc(it.name)}</h3><p class="price">${it.price ? rp(it.price) : '-'}</p><div class="act">${act}</div></article>`;
 }
 function renderMenu(){
   if(!state.items.length){
     $('#menu').innerHTML = '<div class="state"><b>Menu belum tersedia</b>Isi data menu di Google Sheet, lalu muat ulang halaman ini.</div>';
     return;
   }
-  const c = state.cat || state.cats[0];
+  const c = state.cats.includes(state.cat) ? state.cat : state.cats[0];
   $('#menu').innerHTML = `<h2 class="cat-title">${esc(c)}</h2><div class="grid">${state.items.filter(i => i.cat === c).map(cardHTML).join('')}</div>`;
 }
 function renderCats(){
@@ -292,18 +330,18 @@ function renderCats(){
   }).join('');
 }
 
-/* ---------- Cart logic ---------- */
+/* ---------- Cart logic (kunci = ID Menu) ---------- */
 function cartList(){ return Object.values(state.cart); }
 function cartTotal(){ return cartList().reduce((s,i) => s + i.price * i.qty, 0); }
 function cartCount(){ return cartList().reduce((s,i) => s + i.qty, 0); }
-function changeQty(name, d){
-  const it = state.items.find(i => i.name === name) || state.cart[name];
-  if(!it) return;
-  const cur = state.cart[name] || { name, price: it.price, qty: 0, note: '' };
-  cur.qty += d;
-  if(cur.qty <= 0) delete state.cart[name]; else state.cart[name] = cur;
+function changeQty(id, d){
+  const it = state.items.find(i => i.id === id);
+  if(!it || !it.price) return;
+  const cur = state.cart[id] || { id, name: it.name, price: it.price, qty: 0, note: '' };
+  cur.qty = Math.min(99, cur.qty + d);
+  if(cur.qty <= 0) delete state.cart[id]; else state.cart[id] = cur;
   saveCart(); refresh();
-  if(d > 0 && cur.qty === 1) toast(`${name} ditambahkan`);
+  if(d > 0 && cur.qty === 1) toast(`${it.name} ditambahkan`);
 }
 function refresh(){
   const n = cartCount();
@@ -319,12 +357,15 @@ function renderCart(){
     $('#cartBody').innerHTML = '<div class="state"><b>Keranjang masih kosong</b>Pilih menu, lalu tekan Tambah.<br><button class="btn-line" data-close>Lihat menu</button></div>';
     return;
   }
-  $('#cartBody').innerHTML = list.map(i => `
+  // Jangan render ulang saat pengguna sedang mengetik catatan
+  const ae = document.activeElement;
+  if(ae && ae.dataset && ae.dataset.note && $('#cartBody').contains(ae)) return;
+  $('#cartBody').innerHTML = list.map(i => { const k = enc(i.id); return `
     <div class="line">
       <div class="line-top"><div><b>${esc(i.name)}</b><small>${rp(i.price)} × ${i.qty} = ${rp(i.price*i.qty)}</small></div>
-        <div class="stepper"><button data-act="dec" data-k="${enc(i.name)}" aria-label="Kurangi ${esc(i.name)}">−</button><span>${i.qty}</span><button data-act="inc" data-k="${enc(i.name)}" aria-label="Tambah ${esc(i.name)}">+</button></div></div>
-      <input data-note="${enc(i.name)}" value="${esc(i.note||'')}" placeholder="Catatan, misalnya tidak pedas" maxlength="120" aria-label="Catatan untuk ${esc(i.name)}">
-    </div>`).join('');
+        <div class="stepper"><button data-act="dec" data-k="${k}" aria-label="Kurangi ${esc(i.name)}">−</button><span>${i.qty}</span><button data-act="inc" data-k="${k}" aria-label="Tambah ${esc(i.name)}">+</button></div></div>
+      <input data-note="${k}" value="${esc(i.note||'')}" placeholder="Catatan, misalnya tidak pedas" maxlength="120" aria-label="Catatan untuk ${esc(i.name)}">
+    </div>`; }).join('');
 }
 function renderRecap(){
   const n = cartCount();
@@ -332,31 +373,56 @@ function renderRecap(){
   $('#recap').textContent = n ? `${n} porsi dari ${cartList().length} menu di keranjang.` : 'Keranjang masih kosong. Tambahkan menu sebelum mengirim.';
 }
 
-/* ---------- Sheets ---------- */
-let openSheet = null;
+/* ---------- Sheets (dialog) ---------- */
+let openSheet = null, lastTrigger = null;
+function setTabs(){
+  const map = { '#sheetCat':'#tabMenu', '#sheetRsv':'#tabRsv' };
+  ['#tabMenu','#tabRsv'].forEach(t => $(t).removeAttribute('aria-current'));
+  if(openSheet === '#sheetCart') return;
+  $(map[openSheet] || '#tabMenu').setAttribute('aria-current','true');
+}
 function openIt(id){
+  const from = document.activeElement;
   closeIt(true);
+  if(from && from !== document.body) lastTrigger = from;
   openSheet = id;
   $(id).classList.add('on'); $('#scrim').classList.add('on');
-  if(id === '#sheetCat') $('#tabMenu').setAttribute('aria-current','true'); else $('#tabMenu').removeAttribute('aria-current');
   document.body.style.overflow = 'hidden';
+  setTabs();
+  const closeBtn = $(id).querySelector('[data-close]');
+  if(closeBtn) closeBtn.focus({ preventScroll:true });
 }
 function closeIt(keep){
+  const was = openSheet;
   ['#sheetCat','#sheetCart','#sheetRsv'].forEach(s => $(s).classList.remove('on'));
   $('#scrim').classList.remove('on');
   document.body.style.overflow = '';
   openSheet = null;
-  if(!keep) $('#tabMenu').setAttribute('aria-current','true');
+  if(!keep){
+    setTabs();
+    if(was && lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll:true });
+    lastTrigger = null;
+  }
+}
+function trapFocus(e){
+  if(e.key !== 'Tab' || !openSheet) return;
+  const f = [...$(openSheet).querySelectorAll('button,input,textarea,a[href]')].filter(el => !el.disabled && !el.hidden && el.offsetParent !== null);
+  if(!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if(!$(openSheet).contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+  else if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
 }
 let tt;
 function toast(msg){
   const t = $('#toast'); t.textContent = msg; t.classList.add('on');
-  clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2200);
+  clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2600);
 }
 
 /* ---------- WhatsApp ---------- */
 function normPhone(p){
   let d = String(p).replace(/\D/g,'');
+  if(d.startsWith('00')) d = d.slice(2);
   if(d.startsWith('0')) d = '62' + d.slice(1);
   else if(d.startsWith('8')) d = '62' + d;
   return d;
@@ -375,7 +441,7 @@ function buildMessage(f){
   if(f.hp) lines.push(`No. HP: ${f.hp}`);
   lines.push('', '*Pesanan:*');
   cartList().forEach((i,n) => {
-    lines.push(`${n+1}. ${i.name} x${i.qty} = ${rp(i.price*i.qty)}`);
+    lines.push(`${n+1}. ${i.name} [${i.id}] x${i.qty} = ${rp(i.price*i.qty)}`);
     if(i.note) lines.push(`   Catatan: ${i.note}`);
   });
   lines.push('', `*Total: ${rp(cartTotal())}*`);
@@ -383,18 +449,24 @@ function buildMessage(f){
   return lines.join('\n');
 }
 function send(){
-  const f = { nama: $('#fNama').value.trim(), tgl: $('#fTgl').value, jam: $('#fJam').value,
+  const f = { nama: clean($('#fNama').value), tgl: $('#fTgl').value, jam: $('#fJam').value,
     orang: parseInt($('#fOrang').value,10) || 0, hp: $('#fHp').value.trim(), catatan: $('#fCatatan').value.trim() };
   ['#fNama','#fTgl','#fJam','#fOrang'].forEach(s => $(s).classList.remove('bad'));
   let bad = false;
   if(!f.nama){ $('#fNama').classList.add('bad'); bad = true; }
   if(!f.tgl){ $('#fTgl').classList.add('bad'); bad = true; }
   if(!f.jam){ $('#fJam').classList.add('bad'); bad = true; }
-  if(f.orang < 1){ $('#fOrang').classList.add('bad'); bad = true; }
-  if(bad){ toast('Isi nama, tanggal, jam, dan jumlah orang dulu.'); return; }
+  if(f.orang < 1 || f.orang > 50){ $('#fOrang').classList.add('bad'); bad = true; }
+  if(bad){ toast('Isi nama, tanggal, jam, dan jumlah orang (1–50) dulu.'); return; }
+  if(new Date(`${f.tgl}T${f.jam}`) < new Date()){
+    $('#fTgl').classList.add('bad'); $('#fJam').classList.add('bad');
+    toast('Waktu reservasi sudah lewat. Pilih waktu berikutnya.'); return;
+  }
   if(!cartCount()){ toast('Keranjang masih kosong. Tambahkan menu dulu.'); return; }
+  const phone = normPhone(state.wa);
+  if(phone.length < 9){ toast('Nomor WhatsApp kafe belum valid. Hubungi kafe langsung.'); return; }
   try{ localStorage.setItem('menu-kafe-profil', JSON.stringify({ nama:f.nama, hp:f.hp })); }catch(e){}
-  const url = `https://wa.me/${normPhone(state.wa)}?text=${enc(buildMessage(f))}`;
+  const url = `https://wa.me/${phone}?text=${enc(buildMessage(f))}`;
   if(!window.open(url, '_blank')) location.href = url;
 }
 
@@ -403,14 +475,17 @@ document.addEventListener('click', e => {
   const cat = e.target.closest('[data-cat]');
   if(cat){ state.cat = dec(cat.dataset.cat); renderMenu(); renderCats(); closeIt(); window.scrollTo({ top:0 }); return; }
   const act = e.target.closest('[data-act]');
-  if(act){ const k = dec(act.dataset.k); changeQty(k, act.dataset.act === 'dec' ? -1 : 1); return; }
+  if(act){ changeQty(dec(act.dataset.k), act.dataset.act === 'dec' ? -1 : 1); return; }
   if(e.target.closest('[data-close]') || e.target === $('#scrim')) closeIt();
 });
 document.addEventListener('input', e => {
   const n = e.target.dataset && e.target.dataset.note;
-  if(n){ const k = dec(n); if(state.cart[k]){ state.cart[k].note = e.target.value.trim(); saveCart(); } }
+  if(n){ const k = dec(n); if(state.cart[k]){ state.cart[k].note = clean(e.target.value); saveCart(); } }
 });
-document.addEventListener('keydown', e => { if(e.key === 'Escape' && openSheet) closeIt(); });
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape' && openSheet) closeIt();
+  trapFocus(e);
+});
 $('#tabMenu').onclick = () => { if(openSheet === '#sheetCat') closeIt(); else { renderCats(); openIt('#sheetCat'); } };
 $('#tabCart').onclick = () => openIt('#sheetCart');
 $('#tabRsv').onclick = () => openIt('#sheetRsv');
@@ -420,7 +495,7 @@ $('#send').onclick = send;
 /* ---------- Init ---------- */
 async function init(){
   loadCart();
-  try{ const p = JSON.parse(localStorage.getItem('menu-kafe-profil')||'{}'); $('#fNama').value = p.nama||''; $('#fHp').value = p.hp||''; }catch(e){}
+  try{ const p = JSON.parse(localStorage.getItem('menu-kafe-profil')||'{}') || {}; $('#fNama').value = p.nama||''; $('#fHp').value = p.hp||''; }catch(e){}
   const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
   $('#fTgl').min = today.toISOString().slice(0,10);
   $('#cafeName').textContent = state.cafe;
@@ -429,36 +504,49 @@ async function init(){
   const [menuRes, setRes] = await Promise.allSettled([ readTab(CONFIG.MENU_TAB), readTab(CONFIG.SETTINGS_TAB, CONFIG.SETTINGS_SHEET_ID, 0) ]);
 
   if(setRes.status === 'fulfilled'){
-    const t = parseSettings(setRes.value);
-    if(t.wa) state.wa = t.wa;
-    if(t.name){ state.cafe = t.name; $('#cafeName').textContent = t.name; document.title = t.name; }
-    if(t.addr){ $('#addrText').textContent = t.addr; $('#loc').hidden = false; }
-    if(t.maps && /^https?:\/\//i.test(t.maps)){ $('#mapLink').href = t.maps; $('#mapLink').hidden = false; $('#loc').hidden = false; }
-    const logoUrl = driveImg(t.logo);
-    if(logoUrl){
-      const lg = $('#logo');
-      lg.onerror = () => { lg.hidden = true; };
-      lg.referrerPolicy = 'no-referrer';
-      lg.src = logoUrl; lg.hidden = false;
-    }
+    try{
+      const t = parseSettings(setRes.value);
+      if(t.wa) state.wa = t.wa;
+      if(t.name){ state.cafe = t.name; $('#cafeName').textContent = t.name; document.title = t.name; }
+      if(t.tagline){ $('#tagline').textContent = t.tagline; $('#tagline').hidden = false; }
+      if(t.addr){ $('#addrText').textContent = t.addr; $('#loc').hidden = false; }
+      if(t.maps && /^https?:\/\//i.test(t.maps)){ $('#mapLink').href = t.maps; $('#mapLink').hidden = false; $('#loc').hidden = false; }
+      const logoUrl = driveImg(t.logo);
+      if(logoUrl){
+        const lg = $('#logo');
+        lg.onerror = () => { lg.hidden = true; };
+        lg.referrerPolicy = 'no-referrer';
+        lg.src = logoUrl; lg.hidden = false;
+      }
+    }catch(e){ console.warn('Pengaturan kafe gagal dibaca:', e); }
   }
 
   if(menuRes.status !== 'fulfilled'){
+    console.warn(menuRes.reason);
     $('#menu').innerHTML = '<div class="state"><b>Menu gagal dimuat</b>Cek koneksi internet dan pastikan Google Sheet dibagikan ke "Siapa saja yang memiliki link".<br><button class="btn-line" onclick="init()">Coba lagi</button></div>';
     return;
   }
-  state.items = parseMenu(menuRes.value);
+  try{
+    state.items = parseMenu(menuRes.value);
+  }catch(e){
+    console.warn(e); state.items = [];
+    $('#menu').innerHTML = '<div class="state"><b>Data menu tidak terbaca</b>Pastikan kolom sheet: ID Menu, Kategori, Menu, Harga, Link Image.<br><button class="btn-line" onclick="init()">Coba lagi</button></div>';
+    return;
+  }
   state.cats = [...new Set(state.items.map(i => i.cat))];
-  state.cat = state.cats[0] || '';   // halaman awal = kategori paling atas di sheet
+  if(!state.cats.includes(state.cat)) state.cat = state.cats[0] || '';
 
-  // Sinkronkan keranjang tersimpan dengan data terbaru dari sheet
-  Object.keys(state.cart).forEach(k => {
-    const it = state.items.find(i => i.name === k);
-    if(!it) delete state.cart[k]; else state.cart[k].price = it.price;
+  // Sinkronkan keranjang dengan sheet terbaru (berdasarkan ID Menu)
+  let removed = 0;
+  Object.keys(state.cart).forEach(id => {
+    const it = state.items.find(i => i.id === id);
+    if(!it || !it.price){ delete state.cart[id]; removed++; }
+    else { state.cart[id].price = it.price; state.cart[id].name = it.name; }
   });
   saveCart();
   refresh();
   renderCats();
+  if(removed) toast(`${removed} menu di keranjang sudah tidak tersedia dan dihapus.`);
 }
 init();
 </script>
