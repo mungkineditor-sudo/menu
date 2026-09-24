@@ -180,14 +180,10 @@ main{padding:6px 20px 0}
 
 <script>
 /* ====== PENGATURAN ======
-   Sheet menu: kolom  ID Menu | Kategori | Menu | Harga | Link Image
-   Sheet pengaturan: kolom A = nama data, kolom B = isi (nama cafe, no whatsapp, alamat, link maps, logo, tagline).
-   Nilai DEFAULT hanya cadangan kalau sheet gagal dimuat. */
+   Data menu & pengaturan kafe dibaca dari Google Apps Script (Code.gs), bukan langsung dari Sheet.
+   Nilai DEFAULT hanya cadangan kalau data gagal dimuat. */
 const CONFIG = {
-  SHEET_ID: '1AslHIh6h215Bg26Ilz1C_jJSpABqGk1725P5y_EvV-w',
-  MENU_TAB: 'Sheet1',
-  SETTINGS_SHEET_ID: '11ru-gvxt6jhD37XQDPllGN8gphp394eDah87p8RsGVA',
-  SETTINGS_TAB: 'Sheet1',
+  API_URL: 'https://script.google.com/macros/s/AKfycbxaBJmdRQA8o9E-Q2-rVCtFRKd1xgfnnUWm6W_-2HamngA8uvK3Xb9gJj9v5K8VMdcV/exec',   // URL akhiran /exec dari Google Apps Script (lihat Code.gs)
   DEFAULT_WA: '085117017130',
   DEFAULT_NAME: 'Leo Caffee',
   CART_KEY: 'menu-kafe-cart-v2',      // v2: keranjang kini memakai ID Menu (data lama diabaikan)
@@ -216,97 +212,33 @@ function loadCart(){
   }catch(e){ state.cart = {}; }
 }
 
-/* ---------- Google Sheet ---------- */
-async function readTab(tab, id = CONFIG.SHEET_ID, headers = 1){
-  const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&headers=${headers}&sheet=${enc(tab)}`;
+/* ---------- API (Google Apps Script) ---------- */
+const apiReady = () => /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/.test(CONFIG.API_URL);
+async function api(params = {}){
+  const qs = new URLSearchParams(params).toString();
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), CONFIG.TIMEOUT_MS);
   try{
-    const res = await fetch(url, { signal: ctl.signal });
+    const res = await fetch(CONFIG.API_URL + (qs ? '?' + qs : ''), { signal: ctl.signal });
     if(!res.ok) throw new Error('HTTP ' + res.status);
-    const txt = await res.text();
-    const a = txt.indexOf('{'), b = txt.lastIndexOf('}');
-    if(a < 0 || b < a) throw new Error('Format tidak dikenali (sheet belum dibagikan?)');
-    const json = JSON.parse(txt.slice(a, b + 1));
-    if(json.status === 'error' || !json.table) throw new Error('Sheet error');
-    return json.table;
+    const j = await res.json();
+    if(!j || !j.ok) throw new Error((j && j.error) || 'Respons API tidak valid');
+    return j;
   } finally { clearTimeout(timer); }
 }
-function driveImg(link){
-  if(!link) return '';
-  const s = String(link).trim();
-  const m = s.match(/\/d\/([\w-]+)/) || s.match(/[?&]id=([\w-]+)/);
-  if(m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w600`;
-  return /^https?:\/\//i.test(s) ? s : '';
+/* Gambar dimuat lewat API (Drive tetap privat), di-cache di memori */
+const imgCache = {}, imgWait = {};
+function loadImg(id){
+  if(!id) return Promise.reject(new Error('no id'));
+  if(imgCache[id]) return Promise.resolve(imgCache[id]);
+  return imgWait[id] || (imgWait[id] = api({ img: id }).then(j => (imgCache[id] = j.data)).finally(() => { delete imgWait[id]; }));
 }
-/* "Rp20.000" -> 20000 ; "15.500,50" -> 15500.5 ; 20000 -> 20000 */
-function parsePrice(v){
-  if(typeof v === 'number') return isFinite(v) && v > 0 ? v : 0;
-  let s = String(v == null ? '' : v).replace(/[^\d.,]/g,'');
-  if(!s) return 0;
-  if(s.includes(',')) s = s.replace(/\./g,'').replace(',','.');
-  else if(/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,'');
-  const n = parseFloat(s);
-  return isFinite(n) && n > 0 ? n : 0;
-}
-function parseMenu(table){
-  const cols = table.cols || [];
-  let rows = table.rows || [];
-  let labels = cols.map(c => clean(c.label).toLowerCase());
-  // Kalau header tidak terbaca sebagai judul kolom, pakai baris pertama sebagai header
-  if(!labels.some(l => l)){
-    const first = (rows[0] && rows[0].c) || [];
-    labels = cols.map((_, i) => clean(first[i] && first[i].v).toLowerCase());
-    rows = rows.slice(1);
-  }
-  const idx = (names, fb) => { const i = labels.findIndex(l => names.includes(l)); return i >= 0 ? i : fb; };
-  const iId = idx(['id menu','id','kode','kode menu'], 0), iCat = idx(['kategori','category'], 1),
-        iName = idx(['menu','nama','nama menu'], 2), iPrice = idx(['harga','price'], 3),
-        iImg = idx(['link image','gambar','image','foto'], 4);
-  const items = [], seen = new Set(), prefixCat = {};
-  let lastCat = 'Menu';
-  rows.forEach(r => {
-    const c = (r && r.c) || [];
-    const v = i => (c[i] && c[i].v != null) ? c[i].v : '';
-    const name = clean(v(iName));
-    if(!name) return;
-    const rawCat = clean(v(iCat));
-    if(rawCat) lastCat = rawCat;
-    let id = clean(v(iId)).replace(/\s+/g,'');
-    // Kategori ditentukan oleh awalan ID (MN-01 -> MN, CA-01 -> CA).
-    // Nama tampilan diambil dari kolom Kategori pada baris PERTAMA dengan awalan itu.
-    const pm = id.match(/^([A-Za-z]+)(?:[-_]|(?=\d))/);
-    const prefix = pm ? pm[1].toUpperCase() : '';
-    let cat = lastCat;
-    if(prefix){
-      if(!prefixCat[prefix]) prefixCat[prefix] = rawCat || prefix;
-      cat = prefixCat[prefix];
-    }
-    if(!id) id = 'auto-' + (lastCat + '-' + name).toLowerCase().replace(/[^a-z0-9]+/g,'-');
-    if(seen.has(id)){ console.warn('ID Menu ganda di sheet:', id, name); let n = 2; while(seen.has(id + '-' + n)) n++; id = id + '-' + n; }
-    seen.add(id);
-    items.push({ id, name, cat, price: parsePrice(v(iPrice)), img: driveImg(String(v(iImg))) });
+function hydrateImages(){
+  document.querySelectorAll('img[data-img]').forEach(img => {
+    const id = img.dataset.img;
+    img.removeAttribute('data-img');
+    loadImg(id).then(src => { img.src = src; }, () => { if(img.isConnected) img.replaceWith(document.createTextNode('☕')); });
   });
-  return items;
-}
-function parseSettings(table){
-  const raw = {};
-  const put = (k, v) => {
-    if(k == null || v == null || !String(k).trim()) return;
-    raw[String(k).trim().toLowerCase().replace(/[_\s]+/g,' ')] = String(v).trim();
-  };
-  const cols = table.cols || [];
-  if(cols[0] && cols[0].label && cols[1] && cols[1].label) put(cols[0].label, cols[1].label);
-  (table.rows || []).forEach(r => { const c = (r && r.c) || []; put(c[0] && c[0].v, c[1] && c[1].v); });
-  const pick = (...ks) => { for(const k of ks) if(raw[k]) return raw[k]; return ''; };
-  return {
-    wa: pick('no whatsapp','whatsapp','wa','no wa'),
-    name: pick('nama cafe','nama kafe','nama'),
-    addr: pick('alamat'),
-    maps: pick('link maps','maps','peta'),
-    logo: pick('logo'),
-    tagline: pick('tagline')
-  };
 }
 
 /* ---------- Render menu ---------- */
@@ -316,7 +248,7 @@ function showSkeleton(){
 function cardHTML(it){
   const q = (state.cart[it.id] || {}).qty || 0;
   const k = enc(it.id);
-  const pic = it.img ? `<img src="${esc(it.img)}" alt="${esc(it.name)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(document.createTextNode('☕'))">` : '☕';
+  const pic = it.imgId ? `<img ${imgCache[it.imgId] ? `src="${imgCache[it.imgId]}"` : `data-img="${esc(it.imgId)}"`} alt="${esc(it.name)}" onerror="this.replaceWith(document.createTextNode('☕'))">` : '☕';
   let act;
   if(!it.price) act = '<button class="btn-add" disabled>Belum tersedia</button>';
   else if(q) act = `<div class="stepper"><button data-act="dec" data-k="${k}" aria-label="Kurangi ${esc(it.name)}">−</button><span>${q}</span><button data-act="inc" data-k="${k}" aria-label="Tambah ${esc(it.name)}">+</button></div>`;
@@ -330,6 +262,7 @@ function renderMenu(){
   }
   const c = state.cats.includes(state.cat) ? state.cat : state.cats[0];
   $('#menu').innerHTML = `<h2 class="cat-title">${esc(c)}</h2><div class="grid">${state.items.filter(i => i.cat === c).map(cardHTML).join('')}</div>`;
+  hydrateImages();
 }
 function renderCats(){
   if(!state.cats.length){ $('#catBody').innerHTML = '<div class="state"><b>Belum ada kategori</b>Tambahkan menu di Google Sheet.</div>'; return; }
@@ -502,50 +435,42 @@ $('#toRsv').onclick = () => openIt('#sheetRsv');
 $('#send').onclick = send;
 
 /* ---------- Init ---------- */
+function applySettings(t){
+  if(t.wa) state.wa = String(t.wa);
+  if(t.name){ state.cafe = String(t.name); $('#cafeName').textContent = state.cafe; document.title = state.cafe; }
+  if(t.tagline){ $('#tagline').textContent = t.tagline; $('#tagline').hidden = false; }
+  if(t.addr){ $('#addrText').textContent = t.addr; $('#loc').hidden = false; }
+  if(t.maps && /^https?:\/\//i.test(t.maps)){ $('#mapLink').href = t.maps; $('#mapLink').hidden = false; $('#loc').hidden = false; }
+  if(t.logoId){
+    const lg = $('#logo');
+    loadImg(t.logoId).then(src => { lg.src = src; lg.hidden = false; }, () => { lg.hidden = true; });
+  }
+}
+function failView(title, msg){
+  $('#menu').innerHTML = `<div class="state"><b>${esc(title)}</b>${msg}<br><button class="btn-line" onclick="init()">Coba lagi</button></div>`;
+}
 async function init(){
   loadCart();
   try{ const p = JSON.parse(localStorage.getItem('menu-kafe-profil')||'{}') || {}; $('#fNama').value = p.nama||''; $('#fHp').value = p.hp||''; }catch(e){}
   const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
   $('#fTgl').min = today.toISOString().slice(0,10);
   $('#cafeName').textContent = state.cafe;
+  if(!apiReady()){ $('#menu').innerHTML = '<div class="state"><b>Alamat API belum diatur</b>Isi CONFIG.API_URL dengan URL Web app Apps Script (berakhiran /exec).</div>'; return; }
   showSkeleton();
 
-  const [menuRes, setRes] = await Promise.allSettled([ readTab(CONFIG.MENU_TAB), readTab(CONFIG.SETTINGS_TAB, CONFIG.SETTINGS_SHEET_ID, 0) ]);
+  let data;
+  try{ data = await api(); }
+  catch(e){ console.warn(e); failView('Menu gagal dimuat', 'Cek koneksi internet, lalu coba lagi. Kalau tetap gagal, hubungi pengelola halaman ini.'); return; }
 
-  if(setRes.status === 'fulfilled'){
-    try{
-      const t = parseSettings(setRes.value);
-      if(t.wa) state.wa = t.wa;
-      if(t.name){ state.cafe = t.name; $('#cafeName').textContent = t.name; document.title = t.name; }
-      if(t.tagline){ $('#tagline').textContent = t.tagline; $('#tagline').hidden = false; }
-      if(t.addr){ $('#addrText').textContent = t.addr; $('#loc').hidden = false; }
-      if(t.maps && /^https?:\/\//i.test(t.maps)){ $('#mapLink').href = t.maps; $('#mapLink').hidden = false; $('#loc').hidden = false; }
-      const logoUrl = driveImg(t.logo);
-      if(logoUrl){
-        const lg = $('#logo');
-        lg.onerror = () => { lg.hidden = true; };
-        lg.referrerPolicy = 'no-referrer';
-        lg.src = logoUrl; lg.hidden = false;
-      }
-    }catch(e){ console.warn('Pengaturan kafe gagal dibaca:', e); }
-  }
+  try{ applySettings(data.settings || {}); }catch(e){ console.warn('Pengaturan kafe gagal dibaca:', e); }
 
-  if(menuRes.status !== 'fulfilled'){
-    console.warn(menuRes.reason);
-    $('#menu').innerHTML = '<div class="state"><b>Menu gagal dimuat</b>Cek koneksi internet dan pastikan Google Sheet dibagikan ke "Siapa saja yang memiliki link".<br><button class="btn-line" onclick="init()">Coba lagi</button></div>';
-    return;
-  }
-  try{
-    state.items = parseMenu(menuRes.value);
-  }catch(e){
-    console.warn(e); state.items = [];
-    $('#menu').innerHTML = '<div class="state"><b>Data menu tidak terbaca</b>Pastikan kolom sheet: ID Menu, Kategori, Menu, Harga, Link Image.<br><button class="btn-line" onclick="init()">Coba lagi</button></div>';
-    return;
-  }
+  state.items = (Array.isArray(data.items) ? data.items : [])
+    .filter(i => i && i.id && i.name)
+    .map(i => ({ id: String(i.id), name: String(i.name), cat: String(i.cat || 'Menu'), price: Number(i.price) || 0, imgId: String(i.imgId || '') }));
   state.cats = [...new Set(state.items.map(i => i.cat))];
   if(!state.cats.includes(state.cat)) state.cat = state.cats[0] || '';
 
-  // Sinkronkan keranjang dengan sheet terbaru (berdasarkan ID Menu)
+  // Sinkronkan keranjang dengan menu terbaru (berdasarkan ID Menu)
   let removed = 0;
   Object.keys(state.cart).forEach(id => {
     const it = state.items.find(i => i.id === id);
