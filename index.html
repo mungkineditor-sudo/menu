@@ -263,20 +263,29 @@ function parseMenu(table){
   const iId = idx(['id menu','id','kode','kode menu'], 0), iCat = idx(['kategori','category'], 1),
         iName = idx(['menu','nama','nama menu'], 2), iPrice = idx(['harga','price'], 3),
         iImg = idx(['link image','gambar','image','foto'], 4);
-  const items = [], seen = new Set();
+  const items = [], seen = new Set(), prefixCat = {};
   let lastCat = 'Menu';
   rows.forEach(r => {
     const c = (r && r.c) || [];
     const v = i => (c[i] && c[i].v != null) ? c[i].v : '';
     const name = clean(v(iName));
     if(!name) return;
-    const cat = clean(v(iCat));
-    if(cat) lastCat = cat;
+    const rawCat = clean(v(iCat));
+    if(rawCat) lastCat = rawCat;
     let id = clean(v(iId)).replace(/\s+/g,'');
+    // Kategori ditentukan oleh awalan ID (MN-01 -> MN, CA-01 -> CA).
+    // Nama tampilan diambil dari kolom Kategori pada baris PERTAMA dengan awalan itu.
+    const pm = id.match(/^([A-Za-z]+)(?:[-_]|(?=\d))/);
+    const prefix = pm ? pm[1].toUpperCase() : '';
+    let cat = lastCat;
+    if(prefix){
+      if(!prefixCat[prefix]) prefixCat[prefix] = rawCat || prefix;
+      cat = prefixCat[prefix];
+    }
     if(!id) id = 'auto-' + (lastCat + '-' + name).toLowerCase().replace(/[^a-z0-9]+/g,'-');
     if(seen.has(id)){ console.warn('ID Menu ganda di sheet:', id, name); let n = 2; while(seen.has(id + '-' + n)) n++; id = id + '-' + n; }
     seen.add(id);
-    items.push({ id, name, cat: lastCat, price: parsePrice(v(iPrice)), img: driveImg(String(v(iImg))) });
+    items.push({ id, name, cat, price: parsePrice(v(iPrice)), img: driveImg(String(v(iImg))) });
   });
   return items;
 }
