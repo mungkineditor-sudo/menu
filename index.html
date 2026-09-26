@@ -75,6 +75,34 @@
   .setting-row select option {
     color: #000;
   }
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .stepper button {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    cursor: pointer;
+  }
+  .stepper button:active {
+    background: rgba(255,255,255,0.35);
+  }
+  .stepper .stepper-value {
+    min-width: 32px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    color: #4da6ff;
+  }
   #mobile-controls {
     position: absolute;
     bottom: 16px;
@@ -159,22 +187,20 @@
   <div id="error"></div>
   <div id="settings-panel">
     <div class="setting-row">
-      <label for="speed-select">Camera Speed</label>
-      <select id="speed-select">
-        <option value="0.15">Sangat Pelan</option>
-        <option value="0.25">Pelan</option>
-        <option value="0.35" selected>Normal</option>
-        <option value="0.6">Cepat</option>
-        <option value="1.0">Sangat Cepat</option>
-      </select>
+      <label>Camera Speed</label>
+      <div class="stepper">
+        <button id="speed-minus" aria-label="Kurangi kecepatan">−</button>
+        <span class="stepper-value" id="speed-value">0.35</span>
+        <button id="speed-plus" aria-label="Tambah kecepatan">+</button>
+      </div>
     </div>
     <div class="setting-row">
       <label for="quality-select">Kualitas</label>
       <select id="quality-select">
-        <option value="0">Potato</option>
+        <option value="0" selected>Potato</option>
         <option value="1">Low</option>
         <option value="2">Medium</option>
-        <option value="3" selected>High</option>
+        <option value="3">High</option>
         <option value="4">Super High</option>
       </select>
     </div>
@@ -283,16 +309,27 @@ controls.mouseButtons = {
 controls.panSpeed = PAN_SPEED;
 renderer.domElement.style.touchAction = 'none';
 
-// Panel pengaturan (pojok kiri atas) - Camera Speed & Kualitas, diatur langsung oleh pengguna
-const speedSelectEl = document.getElementById('speed-select');
+// Panel pengaturan (pojok kiri atas) - Camera Speed (stepper) & Kualitas (dropdown)
+const speedValueEl = document.getElementById('speed-value');
 const qualitySelectEl = document.getElementById('quality-select');
 
+const SPEED_STEP = 0.1;
+const SPEED_MIN = 0.05;
+const SPEED_MAX = 1.5;
+
 function setRotateSpeed(value) {
-  const clamped = THREE.MathUtils.clamp(parseFloat(value), 0.05, 1.5);
+  const clamped = THREE.MathUtils.clamp(value, SPEED_MIN, SPEED_MAX);
   controls.rotateSpeed = clamped;
+  speedValueEl.textContent = clamped.toFixed(2);
 }
-setRotateSpeed(speedSelectEl.value);
-speedSelectEl.addEventListener('change', (e) => setRotateSpeed(e.target.value));
+setRotateSpeed(ROTATE_SPEED);
+
+document.getElementById('speed-plus').addEventListener('click', () => {
+  setRotateSpeed(controls.rotateSpeed + SPEED_STEP);
+});
+document.getElementById('speed-minus').addEventListener('click', () => {
+  setRotateSpeed(controls.rotateSpeed - SPEED_STEP);
+});
 
 // Level kualitas: Potato - Low - Medium - High - Super High
 const QUALITY_LEVELS = [
