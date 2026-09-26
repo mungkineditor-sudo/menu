@@ -26,45 +26,54 @@
     touch-action: none;
     display: block;
   }
-  #speed-control {
+  #settings-panel {
     position: absolute;
     top: 12px;
     left: 12px;
     display: flex;
-    align-items: center;
-    gap: 0;
-    background: rgba(0,0,0,0.45);
-    backdrop-filter: blur(4px);
-    border-radius: 24px;
-    padding: 4px;
+    flex-direction: row;
+    gap: 10px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(6px);
+    border-radius: 14px;
+    padding: 10px 12px;
     z-index: 8;
     color: #fff;
-    font-size: 13px;
+    font-size: 12px;
     -webkit-user-select: none;
     user-select: none;
   }
-  #speed-control button {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-    font-size: 18px;
+  .setting-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .setting-row label {
     font-weight: bold;
-    line-height: 1;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+  }
+  .setting-row select {
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 6px 24px 6px 10px;
+    border-radius: 8px;
+    border: none;
+    background-color: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 12px;
+    outline: none;
     cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 16px;
   }
-  #speed-control button:active {
-    background: rgba(255,255,255,0.35);
+  .setting-row select:active {
+    background-color: rgba(255,255,255,0.3);
   }
-  #speed-control .speed-label {
-    padding: 0 10px;
-    min-width: 42px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
+  .setting-row select option {
+    color: #000;
   }
   #mobile-controls {
     position: absolute;
@@ -148,10 +157,27 @@
     <div class="bar-bg"><div class="bar-fill" id="bar-fill"></div></div>
   </div>
   <div id="error"></div>
-  <div id="speed-control">
-    <button id="speed-minus" aria-label="Kurangi kecepatan">−</button>
-    <span class="speed-label" id="speed-value">0.35</span>
-    <button id="speed-plus" aria-label="Tambah kecepatan">+</button>
+  <div id="settings-panel">
+    <div class="setting-row">
+      <label for="speed-select">Camera Speed</label>
+      <select id="speed-select">
+        <option value="0.15">Sangat Pelan</option>
+        <option value="0.25">Pelan</option>
+        <option value="0.35" selected>Normal</option>
+        <option value="0.6">Cepat</option>
+        <option value="1.0">Sangat Cepat</option>
+      </select>
+    </div>
+    <div class="setting-row">
+      <label for="quality-select">Kualitas</label>
+      <select id="quality-select">
+        <option value="0">Potato</option>
+        <option value="1">Low</option>
+        <option value="2">Medium</option>
+        <option value="3" selected>High</option>
+        <option value="4">Super High</option>
+      </select>
+    </div>
   </div>
   <div id="info">
     🖱️ Klik/1 jari geser: putar kamera<br>
@@ -210,11 +236,9 @@ camera.position.set(5, 5, 5);
 // Renderer
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(container.clientWidth, container.clientHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.0;
-renderer.shadowMap.enabled = true;
 container.appendChild(renderer.domElement);
 
 // Lighting
@@ -259,25 +283,43 @@ controls.mouseButtons = {
 controls.panSpeed = PAN_SPEED;
 renderer.domElement.style.touchAction = 'none';
 
-// Panel kecepatan rotasi (pojok kiri atas) - bisa diatur langsung oleh pengguna
-const SPEED_STEP = 0.1;
-const SPEED_MIN = 0.05;
-const SPEED_MAX = 1.5;
-const speedValueEl = document.getElementById('speed-value');
+// Panel pengaturan (pojok kiri atas) - Camera Speed & Kualitas, diatur langsung oleh pengguna
+const speedSelectEl = document.getElementById('speed-select');
+const qualitySelectEl = document.getElementById('quality-select');
 
 function setRotateSpeed(value) {
-  const clamped = THREE.MathUtils.clamp(value, SPEED_MIN, SPEED_MAX);
+  const clamped = THREE.MathUtils.clamp(parseFloat(value), 0.05, 1.5);
   controls.rotateSpeed = clamped;
-  speedValueEl.textContent = clamped.toFixed(2);
 }
-setRotateSpeed(ROTATE_SPEED);
+setRotateSpeed(speedSelectEl.value);
+speedSelectEl.addEventListener('change', (e) => setRotateSpeed(e.target.value));
 
-document.getElementById('speed-plus').addEventListener('click', () => {
-  setRotateSpeed(controls.rotateSpeed + SPEED_STEP);
-});
-document.getElementById('speed-minus').addEventListener('click', () => {
-  setRotateSpeed(controls.rotateSpeed - SPEED_STEP);
-});
+// Level kualitas: Potato - Low - Medium - High - Super High
+const QUALITY_LEVELS = [
+  { name: 'Potato',     pixelRatio: 0.5, shadows: false, shadowMapSize: 512,  shadowType: THREE.BasicShadowMap },
+  { name: 'Low',        pixelRatio: 1,   shadows: false, shadowMapSize: 512,  shadowType: THREE.BasicShadowMap },
+  { name: 'Medium',     pixelRatio: 1.5, shadows: true,  shadowMapSize: 1024, shadowType: THREE.PCFShadowMap },
+  { name: 'High',       pixelRatio: 2,   shadows: true,  shadowMapSize: 2048, shadowType: THREE.PCFSoftShadowMap },
+  { name: 'Super High', pixelRatio: 3,   shadows: true,  shadowMapSize: 4096, shadowType: THREE.PCFSoftShadowMap },
+];
+
+function applyQuality(index) {
+  const level = QUALITY_LEVELS[index];
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, level.pixelRatio));
+  renderer.shadowMap.enabled = level.shadows;
+  renderer.shadowMap.type = level.shadowType;
+
+  dirLight.castShadow = level.shadows;
+  dirLight.shadow.mapSize.width = level.shadowMapSize;
+  dirLight.shadow.mapSize.height = level.shadowMapSize;
+  if (dirLight.shadow.map) {
+    dirLight.shadow.map.dispose();
+    dirLight.shadow.map = null;
+  }
+}
+applyQuality(parseInt(qualitySelectEl.value, 10));
+qualitySelectEl.addEventListener('change', (e) => applyQuality(parseInt(e.target.value, 10)));
 
 // Tombol zoom manual untuk mobile (lebih mudah dari pinch di sebagian browser)
 function zoomByFactor(factor) {
