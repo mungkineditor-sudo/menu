@@ -26,6 +26,46 @@
     touch-action: none;
     display: block;
   }
+  #speed-control {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(4px);
+    border-radius: 24px;
+    padding: 4px;
+    z-index: 8;
+    color: #fff;
+    font-size: 13px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  #speed-control button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 1;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    cursor: pointer;
+  }
+  #speed-control button:active {
+    background: rgba(255,255,255,0.35);
+  }
+  #speed-control .speed-label {
+    padding: 0 10px;
+    min-width: 42px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
   #mobile-controls {
     position: absolute;
     bottom: 16px;
@@ -108,6 +148,11 @@
     <div class="bar-bg"><div class="bar-fill" id="bar-fill"></div></div>
   </div>
   <div id="error"></div>
+  <div id="speed-control">
+    <button id="speed-minus" aria-label="Kurangi kecepatan">−</button>
+    <span class="speed-label" id="speed-value">0.35</span>
+    <button id="speed-plus" aria-label="Tambah kecepatan">+</button>
+  </div>
   <div id="info">
     🖱️ Klik/1 jari geser: putar kamera<br>
     🖲️ Scroll/cubit 2 jari: zoom in/out<br>
@@ -136,6 +181,12 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ---- Ganti nama file di bawah ini jika nama model kamu berbeda ----
 const MODEL_PATH = 'kamar_pas_lt_2_ver_4.glb';
+// ---------------------------------------------------------------
+
+// ---- Pengaturan kecepatan kontrol kamera (silakan disesuaikan) ----
+const ROTATE_SPEED = 0.35;   // makin kecil = putar kamera makin pelan/halus
+const ZOOM_SPEED   = 0.8;    // kecepatan zoom scroll/pinch
+const PAN_SPEED    = 0.5;    // kecepatan geser (pan)
 // ---------------------------------------------------------------
 
 const container = document.getElementById('canvas-container');
@@ -187,9 +238,9 @@ const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
 controls.enableZoom = true;
-controls.zoomSpeed = 1.0;
+controls.zoomSpeed = ZOOM_SPEED;
 controls.enableRotate = true;
-controls.rotateSpeed = 0.8;
+controls.rotateSpeed = ROTATE_SPEED;
 controls.enablePan = true;
 controls.minDistance = 0.1;
 controls.maxDistance = 500;
@@ -205,8 +256,28 @@ controls.mouseButtons = {
   MIDDLE: THREE.MOUSE.DOLLY,
   RIGHT: THREE.MOUSE.PAN
 };
-controls.panSpeed = 0.8;
+controls.panSpeed = PAN_SPEED;
 renderer.domElement.style.touchAction = 'none';
+
+// Panel kecepatan rotasi (pojok kiri atas) - bisa diatur langsung oleh pengguna
+const SPEED_STEP = 0.1;
+const SPEED_MIN = 0.05;
+const SPEED_MAX = 1.5;
+const speedValueEl = document.getElementById('speed-value');
+
+function setRotateSpeed(value) {
+  const clamped = THREE.MathUtils.clamp(value, SPEED_MIN, SPEED_MAX);
+  controls.rotateSpeed = clamped;
+  speedValueEl.textContent = clamped.toFixed(2);
+}
+setRotateSpeed(ROTATE_SPEED);
+
+document.getElementById('speed-plus').addEventListener('click', () => {
+  setRotateSpeed(controls.rotateSpeed + SPEED_STEP);
+});
+document.getElementById('speed-minus').addEventListener('click', () => {
+  setRotateSpeed(controls.rotateSpeed - SPEED_STEP);
+});
 
 // Tombol zoom manual untuk mobile (lebih mudah dari pinch di sebagian browser)
 function zoomByFactor(factor) {
@@ -288,10 +359,17 @@ loader.load(
 );
 
 // Resize handling
-window.addEventListener('resize', () => {
+function updateSize() {
   camera.aspect = container.clientWidth / container.clientHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(container.clientWidth, container.clientHeight);
+}
+window.addEventListener('resize', updateSize);
+// Beberapa browser mobile telat update ukuran tepat saat rotasi,
+// jadi dipanggil lagi sedikit setelah event orientationchange
+window.addEventListener('orientationchange', () => {
+  setTimeout(updateSize, 100);
+  setTimeout(updateSize, 400);
 });
 
 // Animation loop
