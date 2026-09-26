@@ -1,488 +1,235 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1D5A44">
-<title>Menu Kafe</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Viewer - Kamar Pas Lt 2</title>
 <style>
-:root{
-  --bg:#F4F6F0; --card:#FFFFFF; --ink:#15251E; --muted:#66756D; --line:#DCE3D9;
-  --green:#1D5A44; --green-d:#134232; --mango:#F2A922; --danger:#B3261E;
-  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
-  --body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  box-sizing:border-box;
-}
-*,*::before,*::after{box-sizing:inherit}
-[hidden]{display:none !important}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.45 var(--body);
-  padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))}
-button,input,textarea{font:inherit;color:inherit}
-button{cursor:pointer;border:0;background:none}
-:focus-visible{outline:3px solid var(--mango);outline-offset:2px}
-.wrap{max-width:520px;margin:0 auto}
-
-.hero{background:var(--green);color:#fff;text-align:center;padding:calc(20px + env(safe-area-inset-top,0px)) 20px 22px;border-radius:0 0 28px 28px;
-  display:flex;flex-direction:column;align-items:center;gap:10px}
-.hero h1{font:800 28px/1.1 var(--display);margin:0;letter-spacing:-.01em}
-.hero p{margin:-4px 0 0;font-size:14px;color:#CFE3D9}
-.logo{width:60px;height:60px;border-radius:18px;object-fit:cover;background:#fff;display:block}
-
-.loc{display:flex;align-items:flex-start;gap:8px;background:#E8F0EA;border-radius:16px;padding:12px 14px;font-size:14px;color:var(--green-d);margin-bottom:8px}
-.loc svg{width:18px;height:18px;flex:none;margin-top:2px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.loc a{color:var(--green);font-weight:600;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
-
-.cat-row{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;padding:15px 16px;margin-bottom:10px;
-  border-radius:16px;background:#fff;border:1.5px solid var(--line);font-weight:600;font-size:17px;text-transform:capitalize}
-.cat-row small{display:block;margin-top:2px;color:var(--muted);font-weight:400;font-size:13px;text-transform:none}
-.cat-row svg{width:22px;height:22px;flex:none;stroke:var(--green);fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.cat-row[aria-pressed="true"]{border-color:var(--green);background:#E8F0EA}
-
-main{padding:6px 20px 0}
-.cat-title{font:800 24px/1.15 var(--display);margin:22px 0 14px;text-transform:capitalize}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.item{background:var(--card);border-radius:18px;padding:8px 8px 12px;display:flex;flex-direction:column;border:1px solid var(--line)}
-.item .pic{aspect-ratio:1/1;border-radius:12px;background:#E6ECE2;overflow:hidden;display:grid;place-items:center;font-size:34px}
-.item .pic img{width:100%;height:100%;object-fit:cover;display:block}
-.item h3{font:600 16px/1.25 var(--body);margin:10px 4px 2px;overflow-wrap:anywhere}
-.item .price{margin:0 4px 10px;color:var(--green);font-weight:600}
-.item .act{margin-top:auto}
-.btn-add{width:100%;padding:9px 0;border-radius:999px;background:var(--green);color:#fff;font-weight:600;font-size:14px}
-.btn-add:disabled{background:#C9D3CC;color:#5B6A62;cursor:not-allowed}
-.stepper{display:flex;align-items:center;justify-content:space-between;background:#E8F0EA;border-radius:999px;padding:3px}
-.stepper button{width:34px;height:34px;border-radius:50%;background:#fff;font-size:20px;line-height:1;font-weight:600;color:var(--green)}
-.stepper span{font-weight:600;min-width:24px;text-align:center}
-
-.skel{height:220px;border-radius:18px;background:linear-gradient(90deg,#E6ECE2 25%,#F0F4ED 50%,#E6ECE2 75%);background-size:200% 100%;animation:sh 1.3s infinite}
-@keyframes sh{to{background-position:-200% 0}}
-.state{grid-column:1/-1;text-align:center;padding:36px 12px;color:var(--muted)}
-.state b{display:block;color:var(--ink);font:700 18px var(--display);margin-bottom:6px}
-.btn-line{margin-top:14px;padding:10px 20px;border-radius:999px;border:1.5px solid var(--green);color:var(--green);font-weight:600}
-
-.tabbar{position:fixed;left:0;right:0;bottom:calc(12px + env(safe-area-inset-bottom,0px));margin:0 auto;width:calc(100% - 24px);max-width:496px;z-index:20;
-  height:64px;border-radius:32px;background:var(--green);display:grid;grid-template-columns:1fr 84px 1fr;align-items:center;box-shadow:0 8px 24px rgba(19,66,50,.35)}
-.tab{display:flex;flex-direction:column;align-items:center;gap:2px;color:#A9CBBB;font-size:12px;font-weight:600;height:100%;justify-content:center}
-.tab svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
-.tab[aria-current="true"]{color:#fff}
-.tab-cart{position:relative;justify-self:center;width:64px;height:64px;margin-top:-26px;border-radius:50%;background:var(--mango);color:var(--green-d);
-  display:grid;place-items:center;border:5px solid var(--bg)}
-.tab-cart svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.badge{position:absolute;top:-4px;right:-6px;min-width:22px;height:22px;padding:0 6px;border-radius:11px;background:var(--green-d);color:#fff;font-size:12px;font-weight:700;display:grid;place-items:center}
-
-.scrim{position:fixed;inset:0;background:rgba(10,24,18,.5);z-index:25;opacity:0;pointer-events:none;transition:opacity .2s}
-.scrim.on{opacity:1;pointer-events:auto}
-.sheet{position:fixed;left:0;right:0;bottom:0;margin:0 auto;width:100%;max-width:520px;z-index:30;background:var(--bg);
-  border-radius:26px 26px 0 0;max-height:90vh;max-height:90dvh;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .28s cubic-bezier(.2,.8,.2,1);visibility:hidden}
-.sheet.on{transform:none;visibility:visible}
-.sheet header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 8px}
-.sheet h2{font:800 22px var(--display);margin:0}
-.x{width:38px;height:38px;border-radius:50%;background:#E6ECE2;display:grid;place-items:center}
-.x svg{width:18px;height:18px;stroke:var(--ink);stroke-width:2.2;stroke-linecap:round;fill:none}
-.sheet .body{overflow-y:auto;padding:6px 20px 16px;flex:1}
-.sheet footer{padding:12px 20px calc(16px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line);background:var(--bg)}
-.total{display:flex;justify-content:space-between;font-weight:600;margin-bottom:12px}
-.total b{font:800 20px var(--display);color:var(--green)}
-.btn-main{width:100%;padding:15px 0;border-radius:999px;background:var(--green);color:#fff;font-weight:600;font-size:16px}
-.btn-main.wa{background:#1FA855}
-.btn-main:disabled{opacity:.5}
-
-.line{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
-.line-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.line-top b{font-weight:600}
-.line-top small{display:block;color:var(--muted)}
-.line .stepper{flex:none;width:112px}
-.line input{width:100%;margin-top:10px;padding:9px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);font-size:14px}
-
-.field{margin-bottom:14px}
-.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px}
-.field input,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:14px;background:#fff;font-size:16px}
-.field textarea{resize:vertical;min-height:76px}
-.field input.bad,.field textarea.bad{border-color:var(--danger)}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.recap{background:#E8F0EA;border-radius:16px;padding:12px 14px;font-size:14px;color:var(--green-d);margin-bottom:8px}
-
-.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;font-weight:500;z-index:40;opacity:0;pointer-events:none;transition:.2s;max-width:90%;text-align:center}
-.toast.on{opacity:1;transform:translate(-50%,0)}
-@media (prefers-reduced-motion:reduce){.sheet,.scrim,.toast{transition:none}.skel{animation:none}}
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #1a1a1a;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  #canvas-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+  }
+  #loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    font-size: 16px;
+    text-align: center;
+    z-index: 10;
+  }
+  #loading .bar-bg {
+    width: 220px;
+    height: 6px;
+    background: #333;
+    border-radius: 3px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  #loading .bar-fill {
+    width: 0%;
+    height: 100%;
+    background: #4da6ff;
+    transition: width 0.15s ease-out;
+  }
+  #info {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    color: rgba(255,255,255,0.7);
+    font-size: 12px;
+    background: rgba(0,0,0,0.4);
+    padding: 8px 12px;
+    border-radius: 6px;
+    z-index: 5;
+    line-height: 1.5;
+  }
+  #error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ff6b6b;
+    font-size: 14px;
+    text-align: center;
+    max-width: 80%;
+    display: none;
+    z-index: 10;
+  }
 </style>
 </head>
 <body>
-
-<div class="wrap">
-  <div class="hero">
-    <img id="logo" class="logo" alt="Logo kafe" hidden>
-    <h1 id="cafeName">Leo Caffee</h1>
-    <p id="tagline" hidden></p>
+<div id="canvas-container">
+  <div id="loading">
+    Memuat model 3D...
+    <div class="bar-bg"><div class="bar-fill" id="bar-fill"></div></div>
   </div>
-  <main id="menu" aria-live="polite"></main>
+  <div id="error"></div>
+  <div id="info">
+    🖱️ Klik + geser: putar kamera<br>
+    🖲️ Scroll: zoom in/out<br>
+    🖱️ Klik kanan + geser: geser tampilan (pan)
+  </div>
 </div>
 
-<nav class="tabbar" aria-label="Navigasi utama">
-  <button class="tab" id="tabMenu" aria-current="true" aria-label="Pilih kategori menu">
-    <svg viewBox="0 0 24 24"><path d="M5 3v7a2 2 0 0 0 4 0V3M7 3v18M18 3c-2.2 0-3.5 2.4-3.5 5.5S15.8 12 18 12v9"/></svg>Menu
-  </button>
-  <button class="tab-cart" id="tabCart" aria-label="Buka keranjang">
-    <svg viewBox="0 0 24 24"><path d="M3 4h2.2l2.3 10.6a1 1 0 0 0 1 .8h8.6a1 1 0 0 0 1-.8L20 8H6.4"/><circle cx="9.5" cy="19.5" r="1.3"/><circle cx="16.5" cy="19.5" r="1.3"/></svg>
-    <span class="badge" id="badge" hidden>0</span>
-  </button>
-  <button class="tab" id="tabRsv">
-    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>Reservasi
-  </button>
-</nav>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
 
-<div class="scrim" id="scrim"></div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-<section class="sheet" id="sheetCat" role="dialog" aria-modal="true" aria-labelledby="catTitle">
-  <header><h2 id="catTitle">Kategori</h2><button class="x" data-close aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></header>
-  <div class="body" id="catBody"></div>
-  <div style="height:calc(12px + env(safe-area-inset-bottom,0px))"></div>
-</section>
+// ---- Ganti nama file di bawah ini jika nama model kamu berbeda ----
+const MODEL_PATH = 'kamar_pas_lt_2_ver_4.glb';
+// ---------------------------------------------------------------
 
-<section class="sheet" id="sheetCart" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-  <header><h2 id="cartTitle">Keranjang</h2><button class="x" data-close aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></header>
-  <div class="body" id="cartBody"></div>
-  <footer id="cartFoot">
-    <div class="total"><span>Total</span><b id="cartTotal">Rp0</b></div>
-    <button class="btn-main" id="toRsv">Lanjut isi reservasi</button>
-  </footer>
-</section>
+const container = document.getElementById('canvas-container');
+const loadingEl = document.getElementById('loading');
+const barFill = document.getElementById('bar-fill');
+const errorEl = document.getElementById('error');
 
-<section class="sheet" id="sheetRsv" role="dialog" aria-modal="true" aria-labelledby="rsvTitle">
-  <header><h2 id="rsvTitle">Reservasi</h2><button class="x" data-close aria-label="Tutup"><svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg></button></header>
-  <div class="body">
-    <div class="field"><label for="fNama">Nama pemesan</label><input id="fNama" autocomplete="name" maxlength="60" placeholder="Nama kamu"></div>
-    <div class="row2">
-      <div class="field"><label for="fTgl">Tanggal</label><input id="fTgl" type="date"></div>
-      <div class="field"><label for="fJam">Jam</label><input id="fJam" type="time"></div>
-    </div>
-    <div class="row2">
-      <div class="field"><label for="fOrang">Jumlah orang</label><input id="fOrang" type="number" inputmode="numeric" min="1" max="50" value="2"></div>
-      <div class="field"><label for="fHp">No. HP (opsional)</label><input id="fHp" type="tel" inputmode="tel" autocomplete="tel" placeholder="08xx"></div>
-    </div>
-    <div class="field"><label for="fCatatan">Catatan (opsional)</label><textarea id="fCatatan" maxlength="300" placeholder="Contoh: minta meja dekat jendela"></textarea></div>
-    <div class="recap" id="recap"></div>
-    <div class="loc" id="loc" hidden>
-      <svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
-      <span><span id="addrText"></span> <a id="mapLink" href="#" target="_blank" rel="noopener" hidden>Buka peta</a></span>
-    </div>
-  </div>
-  <footer>
-    <div class="total"><span>Total pesanan</span><b id="rsvTotal">Rp0</b></div>
-    <button class="btn-main wa" id="send">Kirim lewat WhatsApp</button>
-  </footer>
-</section>
+// Scene
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x1a1a1a);
 
-<div class="toast" id="toast" role="status"></div>
+// Camera
+const camera = new THREE.PerspectiveCamera(
+  50,
+  container.clientWidth / container.clientHeight,
+  0.01,
+  1000
+);
+camera.position.set(5, 5, 5);
 
-<script>
-/* ====== PENGATURAN ======
-   Data menu & pengaturan kafe dibaca dari Google Apps Script (Code.gs), bukan langsung dari Sheet.
-   Nilai DEFAULT hanya cadangan kalau data gagal dimuat. */
-const CONFIG = {
-  API_URL: 'https://script.google.com/macros/s/AKfycbxaBJmdRQA8o9E-Q2-rVCtFRKd1xgfnnUWm6W_-2HamngA8uvK3Xb9gJj9v5K8VMdcV/exec',   // URL akhiran /exec dari Google Apps Script (lihat Code.gs)
-  DEFAULT_WA: '085117017130',
-  DEFAULT_NAME: 'Leo Caffee',
-  CART_KEY: 'menu-kafe-cart-v2',      // v2: keranjang kini memakai ID Menu (data lama diabaikan)
-  TIMEOUT_MS: 12000
-};
+// Renderer
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true;
+container.appendChild(renderer.domElement);
 
-const $ = s => document.querySelector(s);
-const state = { items: [], cats: [], cat: '', cart: {}, wa: CONFIG.DEFAULT_WA, cafe: CONFIG.DEFAULT_NAME };
-const rp = n => 'Rp' + Math.round(Number(n) || 0).toLocaleString('id-ID');
-const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const enc = encodeURIComponent;
-const dec = s => { try{ return decodeURIComponent(s); }catch(e){ return s; } };
-const clean = s => String(s == null ? '' : s).replace(/\s+/g,' ').trim();
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+scene.add(ambientLight);
 
-/* ---------- Cart storage ---------- */
-function saveCart(){ try{ localStorage.setItem(CONFIG.CART_KEY, JSON.stringify(state.cart)); }catch(e){} }
-function loadCart(){
-  state.cart = {};
-  try{
-    const raw = JSON.parse(localStorage.getItem(CONFIG.CART_KEY) || '{}') || {};
-    Object.keys(raw).forEach(id => {
-      const c = raw[id];
-      if(c && typeof c === 'object' && Number.isFinite(c.qty) && c.qty > 0)
-        state.cart[id] = { id, name: clean(c.name), price: Number(c.price) || 0, qty: Math.min(99, Math.floor(c.qty)), note: clean(c.note) };
+const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+dirLight.position.set(5, 10, 7.5);
+dirLight.castShadow = true;
+scene.add(dirLight);
+
+const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.5);
+dirLight2.position.set(-5, 5, -7.5);
+scene.add(dirLight2);
+
+const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 0.6);
+scene.add(hemiLight);
+
+// Controls - rotate, zoom, pan
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.enableZoom = true;
+controls.zoomSpeed = 1.0;
+controls.enableRotate = true;
+controls.rotateSpeed = 0.8;
+controls.enablePan = true;
+controls.minDistance = 0.1;
+controls.maxDistance = 500;
+controls.target.set(0, 0, 0);
+
+// Load model
+const loader = new GLTFLoader();
+
+loader.load(
+  MODEL_PATH,
+  (gltf) => {
+    const model = gltf.scene;
+
+    model.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
     });
-  }catch(e){ state.cart = {}; }
-}
 
-/* ---------- API (Google Apps Script) ---------- */
-const apiReady = () => /^https:\/\/script\.google\.com\/macros\/s\/[\w-]+\/exec/.test(CONFIG.API_URL);
-async function api(params = {}){
-  const qs = new URLSearchParams(params).toString();
-  const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), CONFIG.TIMEOUT_MS);
-  try{
-    const res = await fetch(CONFIG.API_URL + (qs ? '?' + qs : ''), { signal: ctl.signal });
-    if(!res.ok) throw new Error('HTTP ' + res.status);
-    const j = await res.json();
-    if(!j || !j.ok) throw new Error((j && j.error) || 'Respons API tidak valid');
-    return j;
-  } finally { clearTimeout(timer); }
-}
-/* Gambar dimuat lewat API (Drive tetap privat), di-cache di memori */
-const imgCache = {}, imgWait = {};
-function loadImg(id){
-  if(!id) return Promise.reject(new Error('no id'));
-  if(imgCache[id]) return Promise.resolve(imgCache[id]);
-  return imgWait[id] || (imgWait[id] = api({ img: id }).then(j => (imgCache[id] = j.data)).finally(() => { delete imgWait[id]; }));
-}
-function hydrateImages(){
-  document.querySelectorAll('img[data-img]').forEach(img => {
-    const id = img.dataset.img;
-    img.removeAttribute('data-img');
-    loadImg(id).then(src => { img.src = src; }, () => { if(img.isConnected) img.replaceWith(document.createTextNode('☕')); });
-  });
-}
+    // Auto-center & auto-frame kamera berdasarkan ukuran model
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
 
-/* ---------- Render menu ---------- */
-function showSkeleton(){
-  $('#menu').innerHTML = '<div class="grid">' + '<div class="skel"></div>'.repeat(4) + '</div>';
-}
-function cardHTML(it){
-  const q = (state.cart[it.id] || {}).qty || 0;
-  const k = enc(it.id);
-  const pic = it.imgId ? `<img ${imgCache[it.imgId] ? `src="${imgCache[it.imgId]}"` : `data-img="${esc(it.imgId)}"`} alt="${esc(it.name)}" onerror="this.replaceWith(document.createTextNode('☕'))">` : '☕';
-  let act;
-  if(!it.price) act = '<button class="btn-add" disabled>Belum tersedia</button>';
-  else if(q) act = `<div class="stepper"><button data-act="dec" data-k="${k}" aria-label="Kurangi ${esc(it.name)}">−</button><span>${q}</span><button data-act="inc" data-k="${k}" aria-label="Tambah ${esc(it.name)}">+</button></div>`;
-  else act = `<button class="btn-add" data-act="add" data-k="${k}" aria-label="Tambah ${esc(it.name)} ke keranjang">Tambah</button>`;
-  return `<article class="item"><div class="pic">${pic}</div><h3>${esc(it.name)}</h3><p class="price">${it.price ? rp(it.price) : '-'}</p><div class="act">${act}</div></article>`;
-}
-function renderMenu(){
-  if(!state.items.length){
-    $('#menu').innerHTML = '<div class="state"><b>Menu belum tersedia</b>Isi data menu di Google Sheet, lalu muat ulang halaman ini.</div>';
-    return;
+    model.position.x -= center.x;
+    model.position.y -= center.y;
+    model.position.z -= center.z;
+
+    scene.add(model);
+
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const fitDistance = maxDim / (2 * Math.tan((Math.PI * camera.fov) / 360));
+    const cameraDistance = fitDistance * 1.6;
+
+    camera.position.set(cameraDistance, cameraDistance * 0.7, cameraDistance);
+    camera.near = maxDim / 1000;
+    camera.far = maxDim * 100;
+    camera.updateProjectionMatrix();
+
+    controls.target.set(0, 0, 0);
+    controls.minDistance = maxDim * 0.05;
+    controls.maxDistance = maxDim * 10;
+    controls.update();
+
+    loadingEl.style.display = 'none';
+  },
+  (xhr) => {
+    if (xhr.lengthComputable) {
+      const percent = (xhr.loaded / xhr.total) * 100;
+      barFill.style.width = percent.toFixed(0) + '%';
+    }
+  },
+  (err) => {
+    console.error('Gagal memuat model:', err);
+    loadingEl.style.display = 'none';
+    errorEl.style.display = 'block';
+    errorEl.innerHTML =
+      'Gagal memuat file model.<br>Pastikan file <b>' + MODEL_PATH +
+      '</b> berada di folder yang sama dengan index.html, lalu buka halaman ini lewat server (bukan file:// langsung).';
   }
-  const c = state.cats.includes(state.cat) ? state.cat : state.cats[0];
-  $('#menu').innerHTML = `<h2 class="cat-title">${esc(c)}</h2><div class="grid">${state.items.filter(i => i.cat === c).map(cardHTML).join('')}</div>`;
-  hydrateImages();
-}
-function renderCats(){
-  if(!state.cats.length){ $('#catBody').innerHTML = '<div class="state"><b>Belum ada kategori</b>Tambahkan menu di Google Sheet.</div>'; return; }
-  $('#catBody').innerHTML = state.cats.map(c => {
-    const n = state.items.filter(i => i.cat === c).length, on = c === state.cat;
-    return `<button class="cat-row" data-cat="${enc(c)}" aria-pressed="${on}"><span>${esc(c)}<small>${n} menu</small></span>${on ? '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>' : ''}</button>`;
-  }).join('');
-}
+);
 
-/* ---------- Cart logic (kunci = ID Menu) ---------- */
-function cartList(){ return Object.values(state.cart); }
-function cartTotal(){ return cartList().reduce((s,i) => s + i.price * i.qty, 0); }
-function cartCount(){ return cartList().reduce((s,i) => s + i.qty, 0); }
-function changeQty(id, d){
-  const it = state.items.find(i => i.id === id);
-  if(!it || !it.price) return;
-  const cur = state.cart[id] || { id, name: it.name, price: it.price, qty: 0, note: '' };
-  cur.qty = Math.min(99, cur.qty + d);
-  if(cur.qty <= 0) delete state.cart[id]; else state.cart[id] = cur;
-  saveCart(); refresh();
-  if(d > 0 && cur.qty === 1) toast(`${it.name} ditambahkan`);
-}
-function refresh(){
-  const n = cartCount();
-  $('#badge').textContent = n; $('#badge').hidden = n === 0;
-  renderMenu(); renderCart(); renderRecap();
-}
-function renderCart(){
-  const list = cartList();
-  const empty = !list.length;
-  $('#cartFoot').style.display = empty ? 'none' : '';
-  $('#cartTotal').textContent = rp(cartTotal());
-  if(empty){
-    $('#cartBody').innerHTML = '<div class="state"><b>Keranjang masih kosong</b>Pilih menu, lalu tekan Tambah.<br><button class="btn-line" data-close>Lihat menu</button></div>';
-    return;
-  }
-  // Jangan render ulang saat pengguna sedang mengetik catatan
-  const ae = document.activeElement;
-  if(ae && ae.dataset && ae.dataset.note && $('#cartBody').contains(ae)) return;
-  $('#cartBody').innerHTML = list.map(i => { const k = enc(i.id); return `
-    <div class="line">
-      <div class="line-top"><div><b>${esc(i.name)}</b><small>${rp(i.price)} × ${i.qty} = ${rp(i.price*i.qty)}</small></div>
-        <div class="stepper"><button data-act="dec" data-k="${k}" aria-label="Kurangi ${esc(i.name)}">−</button><span>${i.qty}</span><button data-act="inc" data-k="${k}" aria-label="Tambah ${esc(i.name)}">+</button></div></div>
-      <input data-note="${k}" value="${esc(i.note||'')}" placeholder="Catatan, misalnya tidak pedas" maxlength="120" aria-label="Catatan untuk ${esc(i.name)}">
-    </div>`; }).join('');
-}
-function renderRecap(){
-  const n = cartCount();
-  $('#rsvTotal').textContent = rp(cartTotal());
-  $('#recap').textContent = n ? `${n} porsi dari ${cartList().length} menu di keranjang.` : 'Keranjang masih kosong. Tambahkan menu sebelum mengirim.';
-}
-
-/* ---------- Sheets (dialog) ---------- */
-let openSheet = null, lastTrigger = null;
-function setTabs(){
-  const map = { '#sheetCat':'#tabMenu', '#sheetRsv':'#tabRsv' };
-  ['#tabMenu','#tabRsv'].forEach(t => $(t).removeAttribute('aria-current'));
-  if(openSheet === '#sheetCart') return;
-  $(map[openSheet] || '#tabMenu').setAttribute('aria-current','true');
-}
-function openIt(id){
-  const from = document.activeElement;
-  closeIt(true);
-  if(from && from !== document.body) lastTrigger = from;
-  openSheet = id;
-  $(id).classList.add('on'); $('#scrim').classList.add('on');
-  document.body.style.overflow = 'hidden';
-  setTabs();
-  const closeBtn = $(id).querySelector('[data-close]');
-  if(closeBtn) closeBtn.focus({ preventScroll:true });
-}
-function closeIt(keep){
-  const was = openSheet;
-  ['#sheetCat','#sheetCart','#sheetRsv'].forEach(s => $(s).classList.remove('on'));
-  $('#scrim').classList.remove('on');
-  document.body.style.overflow = '';
-  openSheet = null;
-  if(!keep){
-    setTabs();
-    if(was && lastTrigger && document.contains(lastTrigger)) lastTrigger.focus({ preventScroll:true });
-    lastTrigger = null;
-  }
-}
-function trapFocus(e){
-  if(e.key !== 'Tab' || !openSheet) return;
-  const f = [...$(openSheet).querySelectorAll('button,input,textarea,a[href]')].filter(el => !el.disabled && !el.hidden && el.offsetParent !== null);
-  if(!f.length) return;
-  const first = f[0], last = f[f.length - 1];
-  if(!$(openSheet).contains(document.activeElement)){ e.preventDefault(); first.focus(); }
-  else if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-  else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
-}
-let tt;
-function toast(msg){
-  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
-  clearTimeout(tt); tt = setTimeout(() => t.classList.remove('on'), 2600);
-}
-
-/* ---------- WhatsApp ---------- */
-function normPhone(p){
-  let d = String(p).replace(/\D/g,'');
-  if(d.startsWith('00')) d = d.slice(2);
-  if(d.startsWith('0')) d = '62' + d.slice(1);
-  else if(d.startsWith('8')) d = '62' + d;
-  return d;
-}
-function buildMessage(f){
-  const tgl = new Date(f.tgl + 'T00:00').toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
-  const lines = [
-    '*RESERVASI & PESANAN*',
-    `*${state.cafe}*`,
-    '',
-    `Nama: ${f.nama}`,
-    `Tanggal: ${tgl}`,
-    `Jam: ${f.jam.replace(':','.')}`,
-    `Jumlah orang: ${f.orang}`
-  ];
-  if(f.hp) lines.push(`No. HP: ${f.hp}`);
-  lines.push('', '*Pesanan:*');
-  cartList().forEach((i,n) => {
-    lines.push(`${n+1}. ${i.name} [${i.id}] x${i.qty} = ${rp(i.price*i.qty)}`);
-    if(i.note) lines.push(`   Catatan: ${i.note}`);
-  });
-  lines.push('', `*Total: ${rp(cartTotal())}*`);
-  if(f.catatan) lines.push('', `Catatan reservasi: ${f.catatan}`);
-  return lines.join('\n');
-}
-function send(){
-  const f = { nama: clean($('#fNama').value), tgl: $('#fTgl').value, jam: $('#fJam').value,
-    orang: parseInt($('#fOrang').value,10) || 0, hp: $('#fHp').value.trim(), catatan: $('#fCatatan').value.trim() };
-  ['#fNama','#fTgl','#fJam','#fOrang'].forEach(s => $(s).classList.remove('bad'));
-  let bad = false;
-  if(!f.nama){ $('#fNama').classList.add('bad'); bad = true; }
-  if(!f.tgl){ $('#fTgl').classList.add('bad'); bad = true; }
-  if(!f.jam){ $('#fJam').classList.add('bad'); bad = true; }
-  if(f.orang < 1 || f.orang > 50){ $('#fOrang').classList.add('bad'); bad = true; }
-  if(bad){ toast('Isi nama, tanggal, jam, dan jumlah orang (1–50) dulu.'); return; }
-  if(new Date(`${f.tgl}T${f.jam}`) < new Date()){
-    $('#fTgl').classList.add('bad'); $('#fJam').classList.add('bad');
-    toast('Waktu reservasi sudah lewat. Pilih waktu berikutnya.'); return;
-  }
-  if(!cartCount()){ toast('Keranjang masih kosong. Tambahkan menu dulu.'); return; }
-  const phone = normPhone(state.wa);
-  if(phone.length < 9){ toast('Nomor WhatsApp kafe belum valid. Hubungi kafe langsung.'); return; }
-  try{ localStorage.setItem('menu-kafe-profil', JSON.stringify({ nama:f.nama, hp:f.hp })); }catch(e){}
-  const url = `https://wa.me/${phone}?text=${enc(buildMessage(f))}`;
-  if(!window.open(url, '_blank')) location.href = url;
-}
-
-/* ---------- Events ---------- */
-document.addEventListener('click', e => {
-  const cat = e.target.closest('[data-cat]');
-  if(cat){ state.cat = dec(cat.dataset.cat); renderMenu(); renderCats(); closeIt(); window.scrollTo({ top:0 }); return; }
-  const act = e.target.closest('[data-act]');
-  if(act){ changeQty(dec(act.dataset.k), act.dataset.act === 'dec' ? -1 : 1); return; }
-  if(e.target.closest('[data-close]') || e.target === $('#scrim')) closeIt();
+// Resize handling
+window.addEventListener('resize', () => {
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
 });
-document.addEventListener('input', e => {
-  const n = e.target.dataset && e.target.dataset.note;
-  if(n){ const k = dec(n); if(state.cart[k]){ state.cart[k].note = clean(e.target.value); saveCart(); } }
-});
-document.addEventListener('keydown', e => {
-  if(e.key === 'Escape' && openSheet) closeIt();
-  trapFocus(e);
-});
-$('#tabMenu').onclick = () => { if(openSheet === '#sheetCat') closeIt(); else { renderCats(); openIt('#sheetCat'); } };
-$('#tabCart').onclick = () => openIt('#sheetCart');
-$('#tabRsv').onclick = () => openIt('#sheetRsv');
-$('#toRsv').onclick = () => openIt('#sheetRsv');
-$('#send').onclick = send;
 
-/* ---------- Init ---------- */
-function applySettings(t){
-  if(t.wa) state.wa = String(t.wa);
-  if(t.name){ state.cafe = String(t.name); $('#cafeName').textContent = state.cafe; document.title = state.cafe; }
-  if(t.tagline){ $('#tagline').textContent = t.tagline; $('#tagline').hidden = false; }
-  if(t.addr){ $('#addrText').textContent = t.addr; $('#loc').hidden = false; }
-  if(t.maps && /^https?:\/\//i.test(t.maps)){ $('#mapLink').href = t.maps; $('#mapLink').hidden = false; $('#loc').hidden = false; }
-  if(t.logoId){
-    const lg = $('#logo');
-    loadImg(t.logoId).then(src => { lg.src = src; lg.hidden = false; }, () => { lg.hidden = true; });
-  }
+// Animation loop
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
 }
-function failView(title, msg){
-  $('#menu').innerHTML = `<div class="state"><b>${esc(title)}</b>${msg}<br><button class="btn-line" onclick="init()">Coba lagi</button></div>`;
-}
-async function init(){
-  loadCart();
-  try{ const p = JSON.parse(localStorage.getItem('menu-kafe-profil')||'{}') || {}; $('#fNama').value = p.nama||''; $('#fHp').value = p.hp||''; }catch(e){}
-  const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
-  $('#fTgl').min = today.toISOString().slice(0,10);
-  $('#cafeName').textContent = state.cafe;
-  if(!apiReady()){ $('#menu').innerHTML = '<div class="state"><b>Alamat API belum diatur</b>Isi CONFIG.API_URL dengan URL Web app Apps Script (berakhiran /exec).</div>'; return; }
-  showSkeleton();
-
-  let data;
-  try{ data = await api(); }
-  catch(e){ console.warn(e); failView('Menu gagal dimuat', 'Cek koneksi internet, lalu coba lagi. Kalau tetap gagal, hubungi pengelola halaman ini.'); return; }
-
-  try{ applySettings(data.settings || {}); }catch(e){ console.warn('Pengaturan kafe gagal dibaca:', e); }
-
-  state.items = (Array.isArray(data.items) ? data.items : [])
-    .filter(i => i && i.id && i.name)
-    .map(i => ({ id: String(i.id), name: String(i.name), cat: String(i.cat || 'Menu'), price: Number(i.price) || 0, imgId: String(i.imgId || '') }));
-  state.cats = [...new Set(state.items.map(i => i.cat))];
-  if(!state.cats.includes(state.cat)) state.cat = state.cats[0] || '';
-
-  // Sinkronkan keranjang dengan menu terbaru (berdasarkan ID Menu)
-  let removed = 0;
-  Object.keys(state.cart).forEach(id => {
-    const it = state.items.find(i => i.id === id);
-    if(!it || !it.price){ delete state.cart[id]; removed++; }
-    else { state.cart[id].price = it.price; state.cart[id].name = it.name; }
-  });
-  saveCart();
-  refresh();
-  renderCats();
-  if(removed) toast(`${removed} menu di keranjang sudah tidak tersedia dan dihapus.`);
-}
-init();
+animate();
 </script>
 </body>
 </html>
